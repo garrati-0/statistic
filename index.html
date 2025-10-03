@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Statistics Blog</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <style>
+        /* Keyframes for animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInText {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        /* Base body styles */
+        body {
+            font-family: 'Roboto Mono', monospace;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            animation: fadeIn 1s ease-in-out;
+            background-color: #121212; /* Dark theme background */
+            color: #E5E7EB; /* Light gray text color */
+        }
+        
+        /* Noise Overlay Effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            background: url('data:image/svg+xml,%3Csvg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%" height="100%" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            opacity: 0.1;
+            z-index: 9999;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Utility classes for animations and effects */
+        .post-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .blinking-cursor {
+            animation: blink 1s step-end infinite;
+            font-weight: 700;
+            color: #F97316; /* accent */
+        }
+        .tech-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(128, 128, 128, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(128, 128, 128, 0.1) 1px, transparent 1px);
+        }
+        .text-glow-accent {
+            text-shadow: 0 0 5px #F97316;
+        }
+        .text-glow-light {
+             text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+        .animated-text {
+            opacity: 0;
+            animation: fadeInText 0.8s ease-out forwards;
+        }
+        .bouncing-element {
+            animation: bounce 2s infinite ease-in-out;
+        }
+    </style>
+    <script>
+        // Simplified Tailwind config for dark mode only
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        'background-dark': "#121212",
+                        accent: '#F97316', // Orange accent color
+                    },
+                    fontFamily: {
+                        display: ["Roboto Mono", "monospace"],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-background-dark text-gray-200">
+
+<!-- Simplified Hero Section -->
+<div class="relative min-h-screen w-full overflow-hidden tech-grid flex flex-col p-4">
+    <!-- Header Info -->
+    <header class="w-full max-w-6xl mx-auto flex justify-between items-start text-xs uppercase p-4 flex-wrap gap-4">
+        <div class="animated-text" style="animation-delay: 0.2s;">
+            <p>Sapienza University</p>
+            <p class="text-accent">_Statistics Project</p>
+        </div>
+        <div class="animated-text" style="animation-delay: 0.4s;">
+            <p>Master's Degree</p>
+            <p>Cyber Security</p>
+        </div>
+        <div class="animated-text" style="animation-delay: 0.6s;">
+            <p>SESSION_ID: 20252026</p>
+            <p class="text-accent text-glow-accent">[STATUS: ONLINE]</p>
+        </div>
+    </header>
+
+    <!-- Centered Content -->
+    <div class="flex-grow flex flex-col items-center justify-center relative">
+        <!-- Main Title Area -->
+        <div class="w-full flex justify-center md:justify-start md:pl-12 lg:pl-24">
+            <div class="text-center md:text-left">
+                <p class="text-2xl md:text-3xl text-accent font-bold tracking-wider animated-text" style="animation-delay: 1.0s;">BLOG</p>
+                <h1 id="hero-title" class="font-bold text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] leading-none tracking-tighter text-gray-100 text-glow-light">
+                    <span class="blinking-cursor">_</span>
+                </h1>
+            </div>
+        </div>
+        
+        <!-- Index Section -->
+        <div class="mt-12 animated-text" style="animation-delay: 1.2s;">
+            <p class="text-sm uppercase tracking-widest text-accent text-center">Indice</p>
+            <ul id="posts-index" class="mt-2 space-y-1 text-xs uppercase text-center">
+                <!-- Populated by JS -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- Est. Year -->
+    <div class="absolute top-1/2 right-4 -translate-y-1/2 text-xs uppercase hidden sm:block" style="writing-mode: vertical-rl; transform: rotate(180deg) translateY(50%);">
+        <p>Est. 2025</p>
+    </div>
+    
+    <!-- Author Info -->
+    <div class="w-full text-right pb-4 animated-text" style="animation-delay: 1.6s; z-index: 10;">
+        <p class="text-accent text-glow-accent">enrico garrapa // 2222774</p>
+    </div>
+
+    <!-- Scroll Down Indicator -->
+    <a href="#posts" class="w-full flex justify-center pb-8 animated-text" style="animation-delay: 1.8s; z-index: 10;">
+        <div class="bouncing-element flex flex-col items-center text-xs uppercase tracking-widest text-gray-200">
+            <span>Scroll</span>
+            <span class="material-icons text-lg">keyboard_arrow_down</span>
+        </div>
+    </a>
+</div>
+
+<!-- Blog Content -->
+<div id="posts" class="w-full px-4 sm:px-8 py-16 sm:py-24 bg-background-dark tech-grid">
+    <div class="max-w-3xl mx-auto flex flex-col">
+        
+        <!-- Post Card 1 -->
+        <div id="post-1" class="post-card border-x border-b border-gray-200/20">
+            <div class="post-header p-4 sm:p-6 cursor-pointer flex justify-between items-center border-t-4 border-accent">
+                <h2 class="text-lg sm:text-xl md:text-2xl font-bold"><span class="text-accent mr-2">#1</span>What is statistics, and why can it be useful for cybersecurity?</h2>
+                <span class="material-icons expand-icon text-3xl transition-transform duration-300">add</span>
+            </div>
+            <div class="post-content px-4 sm:px-6 pb-6">
+                 <div class="prose prose-invert max-w-none text-gray-300">
+                      <p class="text-sm text-gray-400">October 3, 2025</p>
+                      <p>Statistics is more than just collecting numbers. It is the science of collecting, analyzing, interpreting, presenting, and organizing data. In a world awash with information, statistics provides the tools to make sense of the chaos, uncover hidden patterns, and make informed decisions based on evidence.</p>
+                      <p>It is mainly divided into two branches: <strong>descriptive statistics</strong>, which summarizes data through indicators like the mean or median and graphs, and <strong>inferential statistics</strong>, which allows us to draw conclusions about an entire population based on a data sample.</p>
+                      <p>In cybersecurity, this is crucial. Statistical models can detect anomalies in network traffic that might indicate an attack. They can be used for risk analysis, quantifying the probability and impact of potential threats. Furthermore, techniques like classification and regression are fundamental to malware detection and predicting system vulnerabilities. In essence, statistics empowers cybersecurity professionals to move from a reactive to a proactive stance against digital threats.</p>
+                 </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <footer class="max-w-3xl mx-auto w-full text-sm mt-16 text-center text-gray-500 px-4">
+        <p>&copy; 2025 Statistics Blog. All rights reserved.</p>
+        <p class="mt-2">Creato da Enrico Garrapa - Matricola: 2222774</p>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const app = {
+            // Point of entry
+            init() {
+                this.generateIndex();
+                this.initPostCards();
+                this.initTypewriter();
+            },
+
+            // Auto-generates the index from post cards
+            generateIndex() {
+                const postsIndex = document.getElementById('posts-index');
+                const posts = document.querySelectorAll('.post-card');
+                if (!postsIndex || posts.length === 0) return;
+
+                postsIndex.innerHTML = ''; // Clear existing items
+
+                posts.forEach(post => {
+                    const postId = post.id;
+                    const postTitleElement = post.querySelector('h2');
+                    if (!postId || !postTitleElement) return;
+
+                    // Extract and shorten the title for the index
+                    const titleText = postTitleElement.textContent.trim();
+                    const titleWords = titleText.split(' ');
+                    const shortTitle = titleWords.slice(0, 4).join(' ') + (titleWords.length > 4 ? '...' : '');
+
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `<a href="#${postId}" class="hover:text-accent transition-colors duration-300">${shortTitle}</a>`;
+                    postsIndex.appendChild(listItem);
+                });
+            },
+
+            // Handles the expand/collapse functionality for each post
+            initPostCards() {
+                const cards = document.querySelectorAll('.post-card');
+                cards.forEach(card => {
+                    const header = card.querySelector('.post-header');
+                    const content = card.querySelector('.post-content');
+                    const icon = header.querySelector('.expand-icon');
+
+                    header.addEventListener('click', () => {
+                        const isExpanded = card.classList.toggle('expanded');
+                        
+                        if (isExpanded) {
+                            content.style.maxHeight = content.scrollHeight + "px";
+                            icon.textContent = 'remove';
+                            icon.style.transform = 'rotate(180deg)';
+                        } else {
+                            content.style.maxHeight = '0px';
+                            icon.textContent = 'add';
+                            icon.style.transform = 'rotate(0deg)';
+                        }
+                    });
+                });
+            },
+
+            // Initializes the typewriter effect for the hero title
+            initTypewriter() {
+                const titleEl = document.getElementById('hero-title');
+                if (!titleEl) return;
+                
+                const cursorEl = titleEl.querySelector('.blinking-cursor');
+                const textToType = "STATISTICS";
+                let i = 0;
+
+                function typeWriter() {
+                    if (i < textToType.length) {
+                        cursorEl.insertAdjacentText('beforebegin', textToType.charAt(i));
+                        i++;
+                        setTimeout(typeWriter, 150); // Typing speed
+                    }
+                }
+                setTimeout(typeWriter, 500); // Delay before starting
+            }
+        };
+
+        app.init();
+    });
+</script>
+
+</body>
+</html>
+
