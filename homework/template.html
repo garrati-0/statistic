@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    
+    <title>[TITOLO ARTICOLO] - Statistics Blog</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <style>
+        /* Keyframes for animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Base body styles */
+        body {
+            font-family: 'Roboto Mono', monospace;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            animation: fadeIn 1s ease-in-out;
+            background-color: #121212;
+            color: #E5E7EB;
+        }
+        
+        /* Noise Overlay Effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            background: url('data:image/svg+xml,%3Csvg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%" height="100%" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            opacity: 0.1;
+            z-index: 9999;
+        }
+
+        .tech-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(128, 128, 128, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(128, 128, 128, 0.1) 1px, transparent 1px);
+        }
+        .text-glow-accent {
+            text-shadow: 0 0 5px #F97316;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        'background-dark': "#121212",
+                        accent: '#F97316',
+                    },
+                    fontFamily: {
+                        display: ["Roboto Mono", "monospace"],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-background-dark text-gray-200">
+
+<div class="w-full min-h-screen px-4 sm:px-8 py-16 sm:py-24 bg-background-dark tech-grid">
+    <div class="max-w-3xl mx-auto flex flex-col">
+        
+        <header class="mb-12">
+            <a href="../../index.html" class="inline-flex items-center text-accent hover:underline mb-8">
+                &lt;&lt;
+                 Back to Home
+            </a>
+
+            <p class="text-sm text-gray-400">[DATA ARTICOLO, es: October 7, 2025]</p>
+            
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mt-2 text-gray-100 leading-tight">
+                <span class="text-accent text-glow-accent">#[NUMERO ARTICOLO]</span> 
+                
+                [TITOLO ARTICOLO]
+            </h1>
+        </header>
+
+        <article class="prose prose-invert max-w-none text-gray-300 prose-lg">
+            
+            <p>Questo è un paragrafo introduttivo. Usa tag `&lt;p&gt;` per i tuoi paragrafi. Lo stile viene applicato automaticamente grazie alle classi "prose".</p>
+            
+            <h2>Questo è un sottotitolo (h2)</h2>
+            <p>Puoi strutturare il tuo articolo usando i titoli. Questo aiuta a dividere il testo in sezioni logiche e a migliorarne la leggibilità.</p>
+            
+            <p>Puoi anche inserire una formula matematica usando la formattazione LaTeX, ad esempio la formula di Bayes: $P(A|B) = \frac{P(B|A)P(A)}{P(B)}$</p>
+            
+            <h3>Liste puntate ed esempi (h3)</h3>
+            <p>Le liste sono un ottimo modo per presentare le informazioni in modo schematico:</p>
+            <ul>
+                <li>Primo punto della lista.</li>
+                <li>Secondo punto della lista.</li>
+                <li>Terzo punto, per mostrare come funziona.</li>
+            </ul>
+            
+            <p>Per argomenti tecnici, i blocchi di codice sono essenziali. Usa i tag `&lt;pre&gt;&lt;code&gt;` come nell'esempio seguente:</p>
+            
+            <pre><code># Esempio di codice Python
+import pandas as pd
+
+def analyze_data(file_path):
+    df = pd.read_csv(file_path)
+    print("Prime 5 righe del dataset:")
+    print(df.head())
+</code></pre>
+
+            <p>Questo è un paragrafo conclusivo. Sentiti libero di aggiungere tutti gli elementi HTML di cui hai bisogno (immagini, link, citazioni, ecc.).</p>
+
+        </article>
+        
+        </div>
+
+    <footer class="max-w-3xl mx-auto w-full text-sm mt-16 text-center text-gray-500 px-4">
+        <p>&copy; 2025 Statistics Blog. All rights reserved.</p>
+        <p class="mt-2">Creato da Enrico Garrapa - Matricola: 2222774</p>
+    </footer>
+</div>
+
+</body>
+</html>
