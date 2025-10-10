@@ -55,6 +55,21 @@
              animation: slideInUp 0.8s ease-out forwards;
              opacity: 0;
         }
+        .query-box {
+            background-color: #1f2937;
+            border-left: 4px solid #F97316;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .query-box code {
+            color: #9CA3AF;
+        }
+        .query-box .result {
+            color: #E5E7EB;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
     </style>
     <script>
         tailwind.config = {
@@ -79,11 +94,6 @@
     <div class="max-w-4xl mx-auto flex flex-col">
         
         <header class="mb-12 animated-element">
-            <a href="../../index.html" class="inline-flex items-center text-accent hover:underline mb-8">
-                &lt;&lt;
-                  Back to Home
-            </a>
-
             <p class="text-sm text-gray-400">October 10, 2025</p>
             
             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mt-2 text-gray-100 leading-tight">
@@ -103,35 +113,105 @@
                 <li><strong>Numerical (Discrete):</strong> Represents countable integer values, like 'Gold Hoard (chests)'.</li>
                 <li><strong>Numerical (Continuous):</strong> Represents measurable values within a range, like 'Wing Span (meters)'.</li>
             </ul>
-            <p class="animated-element" style="animation-delay: 0.6s;">Let's use a slightly more detailed dataset of mythical dragons:</p>
-            
-            <pre class="animated-element overflow-x-auto" style="animation-delay: 0.7s;"><code class="language-json">{
-  "dragons": [
-    { "id": 1, "name": "Ignis", "species": "Fire Drake", "wingSpan_m": 22.5, "breathTemp_C": 950, "hoard_chests": 88 },
-    { "id": 2, "name": "Glacies", "species": "Frost Wyrm", "wingSpan_m": 18.2, "breathTemp_C": -50, "hoard_chests": 152 },
-    { "id": 3, "name": "Fulmen", "species": "Storm Dragon", "wingSpan_m": 25.1, "breathTemp_C": 1200, "hoard_chests": 110 },
-    { "id": 4, "name": "Sylva", "species": "Forest Wyvern", "wingSpan_m": 19.8, "breathTemp_C": 400, "hoard_chests": 45 },
-    { "id": 5, "name": "Umbra", "species": "Shadow Drake", "wingSpan_m": 23.0, "breathTemp_C": 700, "hoard_chests": 201 }
-  ]
-}</code></pre>
+            <p class="animated-element" style="animation-delay: 0.6s;">Let's use a dataset of mythical dragons, presented here as a table for clarity:</p>
 
-            <h2 class="animated-element" style="animation-delay: 0.8s;">Univariate Distribution: A Deep Dive into a Single Variable</h2>
-            <p class="animated-element" style="animation-delay: 0.9s;">A <strong>univariate distribution</strong> analyzes a single variable to understand its central tendency, dispersion, and shape. For our 'hoard_chests' variable (88, 152, 110, 45, 201), we can calculate:</p>
-             <ul>
+            <!-- Improved Data Table -->
+            <div class="animated-element overflow-x-auto not-prose" style="animation-delay: 0.7s;">
+                <table class="w-full text-left border-collapse table-auto">
+                    <thead class="bg-gray-800">
+                        <tr>
+                            <th class="px-4 py-3 text-sm font-bold text-gray-300 border-b-2 border-gray-700">ID</th>
+                            <th class="px-4 py-3 text-sm font-bold text-gray-300 border-b-2 border-gray-700">Name</th>
+                            <th class="px-4 py-3 text-sm font-bold text-gray-300 border-b-2 border-gray-700">Species</th>
+                            <th class="px-4 py-3 text-sm font-bold text-gray-300 border-b-2 border-gray-700">Wing Span (m)</th>
+                            <th class="px-4 py-3 text-sm font-bold text-gray-300 border-b-2 border-gray-700">Breath Temp (°C)</th>
+                            <th class="px-4 py-3 text-sm font-bold text-gray-300 border-b-2 border-gray-700">Hoard (chests)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-gray-900/50">
+                        <tr>
+                            <td class="px-4 py-3 border-b border-gray-700">1</td>
+                            <td class="px-4 py-3 border-b border-gray-700">Ignis</td>
+                            <td class="px-4 py-3 border-b border-gray-700">Fire Drake</td>
+                            <td class="px-4 py-3 border-b border-gray-700">22.5</td>
+                            <td class="px-4 py-3 border-b border-gray-700">950</td>
+                            <td class="px-4 py-3 border-b border-gray-700">88</td>
+                        </tr>
+                         <tr>
+                            <td class="px-4 py-3 border-b border-gray-700">2</td>
+                            <td class="px-4 py-3 border-b border-gray-700">Glacies</td>
+                            <td class="px-4 py-3 border-b border-gray-700">Frost Wyrm</td>
+                            <td class="px-4 py-3 border-b border-gray-700">18.2</td>
+                            <td class="px-4 py-3 border-b border-gray-700">-50</td>
+                            <td class="px-4 py-3 border-b border-gray-700">152</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-3 border-b border-gray-700">3</td>
+                            <td class="px-4 py-3 border-b border-gray-700">Fulmen</td>
+                            <td class="px-4 py-3 border-b border-gray-700">Storm Dragon</td>
+                            <td class="px-4 py-3 border-b border-gray-700">25.1</td>
+                            <td class="px-4 py-3 border-b border-gray-700">1200</td>
+                            <td class="px-4 py-3 border-b border-gray-700">110</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-3 border-b border-gray-700">4</td>
+                            <td class="px-4 py-3 border-b border-gray-700">Sylva</td>
+                            <td class="px-4 py-3 border-b border-gray-700">Forest Wyvern</td>
+                            <td class="px-4 py-3 border-b border-gray-700">19.8</td>
+                            <td class="px-4 py-3 border-b border-gray-700">400</td>
+                            <td class="px-4 py-3 border-b border-gray-700">45</td>
+                        </tr>
+                         <tr>
+                            <td class="px-4 py-3 border-b border-gray-700">5</td>
+                            <td class="px-4 py-3 border-b border-gray-700">Umbra</td>
+                            <td class="px-4 py-3 border-b border-gray-700">Shadow Drake</td>
+                            <td class="px-4 py-3 border-b border-gray-700">23.0</td>
+                            <td class="px-4 py-3 border-b border-gray-700">700</td>
+                            <td class="px-4 py-3 border-b border-gray-700">201</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 class="animated-element" style="animation-delay: 0.8s;">Querying the Dataset for Insights</h2>
+            <p class="animated-element" style="animation-delay: 0.9s;">Once we have a dataset, we can "query" it to ask questions and extract specific information. This is the foundation of data analysis. Think of it like using a search filter to find exactly what you need.</p>
+
+            <div class="query-box animated-element" style="animation-delay: 1.0s;">
+                <p><strong>Query 1:</strong> Find all dragons with a hoard greater than 100 chests.</p>
+                <code>SELECT name, species, hoard_chests FROM dragons WHERE hoard_chests > 100;</code>
+                <p class="result"><strong>Result:</strong> Glacies (152), Fulmen (110), Umbra (201).</p>
+            </div>
+
+            <div class="query-box animated-element" style="animation-delay: 1.1s;">
+                <p><strong>Query 2:</strong> Which dragon has the largest wing span?</p>
+                <code>SELECT name, wingSpan_m FROM dragons ORDER BY wingSpan_m DESC LIMIT 1;</code>
+                <p class="result"><strong>Result:</strong> Fulmen (25.1m).</p>
+            </div>
+
+            <h2 class="animated-element" style="animation-delay: 1.2s;">Univariate Distribution: A Deep Dive into a Single Variable</h2>
+            <p class="animated-element" style="animation-delay: 1.3s;">A <strong>univariate distribution</strong> analyzes a single variable to understand its central tendency, dispersion, and shape. For our 'hoard_chests' variable (88, 152, 110, 45, 201), we can calculate:</p>
+            <ul>
                 <li><strong>Mean:</strong> The average. (88+152+110+45+201)/5 = <strong>119.2 chests</strong>.</li>
                 <li><strong>Median:</strong> The middle value when sorted (45, 88, <strong>110</strong>, 152, 201). <strong>110 chests</strong>.</li>
-                <li><strong>Mode:</strong> The most frequent value. In this case, all values are unique, so there is <strong>no mode</strong>.</li>
-             </ul>
-            <p class="animated-element" style="animation-delay: 1s;">Graphically, we can represent distributions with histograms for continuous data (like 'wingSpan_m') or bar charts for categorical data (like 'species').</p>
+                <li><strong>Mode:</strong> The most frequent value. In this case, there is <strong>no mode</strong>.</li>
+                <li><strong>Range:</strong> The difference between the max and min. 201 - 45 = <strong>156 chests</strong>. This tells us about the spread of the data.</li>
+                 <li><strong>Standard Deviation:</strong> A measure of how spread out the numbers are from the mean. A higher value means more variation. For this data, it's approximately <strong>61.5 chests</strong>.</li>
+            </ul>
             
+            <h2 class="animated-element" style="animation-delay: 1.4s;">Bivariate Distribution: The Relationship Between Two Variables</h2>
+            <p class="animated-element" style="animation-delay: 1.5s;">A <strong>bivariate distribution</strong> explores the relationship between two variables. Is there a connection between a dragon's wing span and its breath temperature? We can visualize this using a <strong>scatter plot</strong>. By observing the plot, we can identify a potential <strong>correlation</strong>. In this case, we see a modest <strong>positive correlation</strong>: dragons with larger wing spans tend to have hotter breath. This reveals patterns that univariate analysis alone cannot.</p>
+            
+            <!-- Scatter Plot Canvas -->
+            <div class="not-prose mt-8 animated-element" style="animation-delay: 1.6s;">
+                 <div class="p-2 sm:p-3 bg-gray-800 rounded-md">
+                     <canvas id="scatterPlot"></canvas>
+                 </div>
+            </div>
 
-            <h2 class="animated-element" style="animation-delay: 1.1s;">Bivariate Distribution: The Relationship Between Two Variables</h2>
-            <p class="animated-element" style="animation-delay: 1.2s;">A <strong>bivariate distribution</strong> explores the relationship between two variables. Is there a connection between a dragon's wing span and its breath temperature? We can visualize this using a <strong>scatter plot</strong>. By plotting each dragon's wing span on the x-axis and breath temperature on the y-axis, we might observe a <strong>positive correlation</strong>: dragons with larger wing spans tend to have hotter breath. This reveals patterns that univariate analysis alone cannot.</p>
+            <h2 class="animated-element" style="animation-delay: 1.7s;">From Statistics to Cryptography: The Caesar Cipher</h2>
+            <p class="animated-element" style="animation-delay: 1.8s;">The concept of frequency distribution is the Achilles' heel of simple substitution ciphers like the <strong>Caesar Cipher</strong>, famously used by Julius Caesar for his private correspondence. Every language has a unique "fingerprint" based on the frequency of its letters. In English, 'E', 'T', and 'A' are the most common. By analyzing the letter frequencies of an encrypted text, we can break the code without knowing the key.</p>
             
-            <h2 class="animated-element" style="animation-delay: 1.3s;">From Statistics to Cryptography: The Caesar Cipher</h2>
-            <p class="animated-element" style="animation-delay: 1.4s;">The concept of frequency distribution is the Achilles' heel of simple substitution ciphers like the <strong>Caesar Cipher</strong>. Every language has a unique "fingerprint" based on the frequency of its letters. In English, 'E', 'T', and 'A' are the most common. By analyzing the letter frequencies of an encrypted text, we can break the code without knowing the key.</p>
-            
-            <div id="simulation-section" class="not-prose mt-16 p-4 sm:p-6 rounded-lg border border-gray-700 bg-gray-900/50 animated-element" style="animation-delay: 1.5s;">
+            <div id="simulation-section" class="not-prose mt-16 p-4 sm:p-6 rounded-lg border border-gray-700 bg-gray-900/50 animated-element" style="animation-delay: 1.9s;">
                 <h2 class="text-xl sm:text-2xl font-bold text-gray-100 mb-4">Interactive Cipher Simulation & Analysis</h2>
                 <p class="text-sm text-gray-400 mb-4">This simulation encrypts your text, then uses the frequency distribution of the original language to deduce the key and automatically decrypt the message.</p>
                 
@@ -184,19 +264,68 @@
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // DOM Elements
+        // --- Dragon Dataset for Scatter Plot ---
+        const dragonData = [
+            { "id": 1, "name": "Ignis", "species": "Fire Drake", "wingSpan_m": 22.5, "breathTemp_C": 950, "hoard_chests": 88 },
+            { "id": 2, "name": "Glacies", "species": "Frost Wyrm", "wingSpan_m": 18.2, "breathTemp_C": -50, "hoard_chests": 152 },
+            { "id": 3, "name": "Fulmen", "species": "Storm Dragon", "wingSpan_m": 25.1, "breathTemp_C": 1200, "hoard_chests": 110 },
+            { "id": 4, "name": "Sylva", "species": "Forest Wyvern", "wingSpan_m": 19.8, "breathTemp_C": 400, "hoard_chests": 45 },
+            { "id": 5, "name": "Umbra", "species": "Shadow Drake", "wingSpan_m": 23.0, "breathTemp_C": 700, "hoard_chests": 201 }
+        ];
+
+        // --- Bivariate Scatter Plot ---
+        const scatterCanvas = document.getElementById('scatterPlot');
+        if (scatterCanvas) {
+            const scatterData = {
+                datasets: [{
+                    label: 'Dragon Wing Span vs. Breath Temp',
+                    data: dragonData.map(d => ({ x: d.wingSpan_m, y: d.breathTemp_C })),
+                    backgroundColor: 'rgba(249, 115, 22, 0.7)',
+                    borderColor: 'rgba(249, 115, 22, 1)',
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            };
+
+            new Chart(scatterCanvas, {
+                type: 'scatter',
+                data: scatterData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: { display: true, text: 'Wing Span (meters)', color: '#9CA3AF' },
+                            ticks: { color: '#9CA3AF' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Breath Temperature (°C)', color: '#9CA3AF' },
+                            ticks: { color: '#9CA3AF' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: { color: '#E5E7EB' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // --- Caesar Cipher Simulation ---
         const inputTextEl = document.getElementById('inputText');
         const shiftKeyEl = document.getElementById('shiftKey');
         const runBtn = document.getElementById('runSimulationBtn');
         const encryptedTextEl = document.getElementById('encryptedText');
         const decryptedTextEl = document.getElementById('decryptedText');
         const analysisResultEl = document.getElementById('analysisResult');
-        const chartCanvas = document.getElementById('freqChart');
+        const freqChartCanvas = document.getElementById('freqChart');
 
         const alphabet = 'abcdefghijklmnopqrstuvwxyz';
         let freqChart = null;
-
-        // --- Core Functions ---
 
         const getFrequency = (text) => {
             const freq = Array(26).fill(0);
@@ -228,9 +357,7 @@
             }).join('');
         };
         
-        // --- Charting Function ---
-
-        const updateChart = (originalFreq, encryptedFreq) => {
+        const updateFreqChart = (originalFreq, encryptedFreq) => {
             const chartData = {
                 labels: alphabet.toUpperCase().split(''),
                 datasets: [
@@ -255,7 +382,7 @@
                 freqChart.data = chartData;
                 freqChart.update();
             } else {
-                freqChart = new Chart(chartCanvas, {
+                freqChart = new Chart(freqChartCanvas, {
                     type: 'bar',
                     data: chartData,
                     options: {
@@ -286,22 +413,16 @@
             }
         };
 
-        // --- Main Simulation Logic ---
         const runSimulation = () => {
-            // 1. Get inputs
             const originalText = inputTextEl.value;
             const encryptionKey = parseInt(shiftKeyEl.value) || 0;
-
-            // 2. Encrypt text
             const encryptedText = caesarCipher(originalText, encryptionKey);
             encryptedTextEl.value = encryptedText;
 
-            // 3. Calculate frequencies and update chart
             const originalFreq = getFrequency(originalText);
             const encryptedFreq = getFrequency(encryptedText);
-            updateChart(originalFreq, encryptedFreq);
+            updateFreqChart(originalFreq, encryptedFreq);
 
-            // 4. Crack the key via frequency analysis
             const originalTopIndex = getMostFrequentIndex(originalFreq);
             const encryptedTopIndex = getMostFrequentIndex(encryptedFreq);
             
@@ -319,17 +440,13 @@
             }
             analysisResultEl.innerHTML = analysisText;
 
-            // 5. Decrypt using the found key
             const decryptedText = caesarCipher(encryptedText, -foundKey);
             decryptedTextEl.value = decryptedText;
         };
 
         runBtn.addEventListener('click', runSimulation);
-
-        // Initial run on page load
-        runSimulation();
+        runSimulation(); // Initial run on page load
     });
 </script>
 </body>
 </html>
-
