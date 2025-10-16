@@ -70,6 +70,38 @@
             font-weight: bold;
             margin-top: 0.5rem;
         }
+        /* Style for the C code block */
+        .code-block {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+            color: #d1d5db;
+        }
+        .code-block pre {
+            margin: 0;
+        }
+        .code-block code {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+        }
+        .code-block .comment {
+            color: #6b7280;
+        }
+        .code-block .keyword {
+            color: #f97316;
+        }
+        .code-block .function {
+            color: #34d399;
+        }
+        .code-block .string {
+            color: #fbbf24;
+        }
+        .code-block .number {
+            color: #60a5fa;
+        }
     </style>
     <script>
         tailwind.config = {
@@ -95,8 +127,8 @@
         
         <header class="mb-12 animated-element">
             <a href="../../index.html" class="inline-flex items-center text-accent hover:underline mb-8">
-               <<
-                Back to Home
+                &lt;&lt;
+                 Back to Home
             </a>
             <p class="text-sm text-gray-400">October 10, 2025</p>
             
@@ -257,6 +289,99 @@
                     </div>
                 </div>
             </div>
+
+            <!-- C Code Section Start -->
+            <div class="animated-element" style="animation-delay: 2.0s; margin-top: 4rem;">
+                <h2>Frequency Analysis in C: A Practical Implementation</h2>
+                <p>While the interactive simulation above shows the concept, here is a complete C program that implements the same frequency analysis cryptanalysis. It encrypts a message, builds a frequency profile from a large sample of Italian text, and then uses that profile to find the most likely key and decrypt the message.</p>
+
+                <div class="code-block not-prose">
+                    <pre><code><span class="comment">// Include standard I/O and standard library for memory allocation and abs()</span>
+<span class="keyword">#include</span> <span class="string">&lt;stdio.h&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;stdlib.h&gt;</span>
+
+<span class="comment">// Function to apply Caesar cipher to a string</span>
+<span class="keyword">void</span> <span class="function">cesar</span>(<span class="keyword">char</span>* text, <span class="keyword">int</span> key) {
+    <span class="comment">// Loop through each character of the string until the null terminator</span>
+    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; text[i] != <span class="number">0</span>; i++) {
+        <span class="comment">// Check if the character is a lowercase letter</span>
+        <span class="keyword">if</span>(text[i] >= <span class="string">'a'</span> && text[i] <= <span class="string">'z'</span>) {
+            <span class="comment">// Apply the shift. 'a' is subtracted to get a 0-25 index.</span>
+            <span class="comment">// The result is wrapped around 26 for the alphabet.</span>
+            <span class="comment">// 'a' is added back to convert the index to an ASCII character.</span>
+            text[i] = (((text[i] - <span class="string">'a'</span>) + key) % <span class="number">26</span>) + <span class="string">'a'</span>;
+        }
+    }
+}
+
+<span class="comment">// Function to calculate the frequency distribution of letters in a text</span>
+<span class="keyword">void</span> <span class="function">distribuzione</span>(<span class="keyword">char</span> *text, <span class="keyword">int</span>* distr) {
+    <span class="comment">// Loop through the text</span>
+    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; text[i] != <span class="number">0</span>; i++) {
+        <span class="comment">// If it's a lowercase letter</span>
+        <span class="keyword">if</span>(text[i] >= <span class="string">'a'</span> && text[i] <= <span class="string">'z'</span>) {
+            <span class="comment">// Increment the count for that letter in the distribution array</span>
+            distr[text[i] - <span class="string">'a'</span>]++;
+        }
+    }
+}
+
+<span class="keyword">int</span> <span class="function">main</span>(<span class="keyword">void</span>) {
+    <span class="comment">// The secret message to be encrypted and then cracked</span>
+    <span class="keyword">char</span> messaggio[] = <span class="string">"ciao io sono enrico tu come ti chiami"</span>;
+
+    <span class="comment">// A large sample of Italian text to create a reference frequency distribution</span>
+    <span class="keyword">char</span> ita[] = <span class="string">" nel regno di eldoria la pace regnava da secoli le verdi vallate..."</span>; <span class="comment">// (Text truncated for brevity)</span>
+
+    <span class="comment">// Allocate and zero-initialize an array for the Italian frequency distribution</span>
+    <span class="keyword">int</span>* distrita = (<span class="keyword">int</span>*)<span class="function">calloc</span>(<span class="number">26</span>, <span class="keyword">sizeof</span>(<span class="keyword">int</span>));
+    <span class="function">distribuzione</span>(ita, distrita);
+
+    <span class="comment">// Encrypt the message with a key of 1</span>
+    <span class="function">cesar</span>(messaggio, <span class="number">1</span>);
+    <span class="function">printf</span>(<span class="string">"Crittografata = %s\n"</span>, messaggio);
+
+    <span class="comment">// Allocate and zero-initialize an array for the encrypted message's distribution</span>
+    <span class="keyword">int</span>* distrcrypt = (<span class="keyword">int</span>*)<span class="function">calloc</span>(<span class="number">26</span>, <span class="keyword">sizeof</span>(<span class="keyword">int</span>));
+    <span class="function">distribuzione</span>(messaggio, distrcrypt);
+
+    <span class="keyword">int</span> chiave = <span class="number">0</span>;
+    <span class="keyword">int</span> dif = <span class="number">2147483647</span>; <span class="comment">// Initialize with the maximum possible integer value</span>
+
+    <span class="comment">// Loop through all 26 possible keys (from 0 to 25)</span>
+    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i < <span class="number">26</span>; i++) {
+        <span class="keyword">int</span> differenza = <span class="number">0</span>;
+        <span class="comment">// For each possible key, compare the shifted distribution with the reference</span>
+        <span class="keyword">for</span>(<span class="keyword">int</span> k = <span class="number">0</span>; k < <span class="number">26</span>; k++) {
+            <span class="comment">// Shift the encrypted distribution by the current trial key 'i'</span>
+            <span class="keyword">int</span> tmp = distrcrypt[(k + i) % <span class="number">26</span>];
+            <span class="comment">// Calculate the sum of absolute differences between frequencies</span>
+            differenza += <span class="function">abs</span>(distrita[k] - tmp);
+        }
+
+        <span class="comment">// If this key gives a smaller total difference, it's a better match</span>
+        <span class="keyword">if</span>(differenza < dif) {
+            dif = differenza; <span class="comment">// Update the minimum difference</span>
+            chiave = i;       <span class="comment">// Store this key as the best guess so far</span>
+        }
+    }
+
+    <span class="comment">// Decrypt the message using the negative of the discovered key</span>
+    <span class="function">cesar</span>(messaggio, -chiave);
+    <span class="function">printf</span>(<span class="string">"Chiave scoperta = %d\nDecrittografata = %s\n"</span>, chiave, messaggio);
+    
+    <span class="comment">// Free the allocated memory</span>
+    <span class="function">free</span>(distrita);
+    <span class="function">free</span>(distrcrypt);
+    
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre>
+                </div>
+                <p style="margin-top: 1.5rem;">The core of this program's cryptanalysis lies in the nested loops. The outer loop tries every possible key from 0 to 25. For each trial key, the inner loop calculates a "score" representing how similar the decrypted text's letter distribution would be to the standard Italian letter distribution. It does this by summing the absolute differences between the frequency counts of each letter. The key that results in the lowest total difference (i.e., the most similar distribution) is declared the winner. This simple statistical method is remarkably effective at breaking simple substitution ciphers.</p>
+            </div>
+            <!-- C Code Section End -->
+
         </article>
         
     </div>
