@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    
+    <title>The Law of Large Numbers - Statistics Blog</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        body {
+            font-family: 'Roboto+Mono', monospace;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            animation: fadeIn 1s ease-in-out;
+            background-color: #121212;
+            color: #E5E7EB;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            background: url('data:image/svg+xml,%3Csvg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%" height="100%" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            opacity: 0.1;
+            z-index: 9999;
+        }
+
+        .tech-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(128, 128, 128, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(128, 128, 128, 0.1) 1px, transparent 1px);
+        }
+        .text-glow-accent {
+            text-shadow: 0 0 8px #F97316, 0 0 2px #F97316;
+        }
+        .animated-element {
+             animation: slideInUp 0.8s ease-out forwards;
+             opacity: 0;
+        }
+        .query-box {
+            background-color: #1f2937;
+            border-left: 4px solid #F97316;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .query-box code {
+            color: #9CA3AF;
+        }
+        .query-box .result {
+            color: #E5E7EB;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        /* Style for the C code block */
+        .code-block {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+            color: #d1d5db;
+        }
+        .code-block pre {
+            margin: 0;
+        }
+        .code-block code {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+        }
+        .code-block .comment {
+            color: #6b7280;
+        }
+        .code-block .keyword {
+            color: #f97316;
+        }
+        .code-block .function {
+            color: #34d399;
+        }
+        .code-block .string {
+            color: #fbbf24;
+        }
+        .code-block .number {
+            color: #60a5fa;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        'background-dark': "#121212",
+                        accent: '#F97316',
+                    },
+                    fontFamily: {
+                        display: ["Roboto Mono", "monospace"],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-background-dark text-gray-200">
+
+<div class="w-full min-h-screen px-4 sm:px-8 py-16 sm:py-24 bg-background-dark tech-grid">
+    <div class="max-w-4xl mx-auto flex flex-col">
+        
+        <header class="mb-12 animated-element">
+            <a href="../../index.html" class="inline-flex items-center text-accent hover:underline mb-8">
+                &lt;&lt;
+                Back to Home
+            </a>
+            <p class="text-sm text-gray-400">October 29, 2025</p>
+            
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mt-2 text-gray-100 leading-tight">
+                <span class="text-accent text-glow-accent">#4</span> 
+                Demonstrating the Law of Large Numbers
+            </h1>
+        </header>
+
+        <article class="prose prose-invert max-w-none text-gray-300 md:prose-lg">
+            
+            <p class="animated-element" style="animation-delay: 0.2s;">In probability theory, the <strong>Law of Large Numbers (LLN)</strong> is a fundamental theorem. It states that as the number of trials of an experiment increases, the average of the results obtained should get closer and closer to the *true* theoretical probability.</p>
+            
+            <h2 class="animated-element" style="animation-delay: 0.4s;">The Experiment: A Virtual Coin Toss</h2>
+            <p class="animated-element" style="animation-delay: 0.5s;">For this assignment, our experiment is a simple coin toss. We'll use JavaScript's <code>Math.random()</code> to generate a number between 0 and 1.</p>
+            <ul>
+                <li>If the number is <strong>&lt; 0.5</strong>, we'll call it "Tails" (and assign it a value of <strong>0</strong>).</li>
+                <li>If the number is <strong>&gt;= 0.5</strong>, we'll call it "Heads" (and assign it a value of <strong>1</strong>).</li>
+            </ul>
+            <p class="animated-element" style="animation-delay: 0.6s;">The theoretical probability of getting "Heads" is exactly 0.5 (or 50%). If we only toss the coin 10 times, we might get 7 heads (a frequency of 0.7) or 3 heads (a frequency of 0.3) just by chance. The LLN states that if we toss the coin 10,000 times, our observed frequency will be extremely close to 0.5.</p>
+
+            <h2 class="animated-element" style="animation-delay: 0.8s;">Visualizing the Law</h2>
+            <p class="animated-element" style="animation-delay: 0.9s;">This simulation will track two metrics across many tosses:</p>
+            <ol>
+                <li><strong>The Random Walk (Path):</strong> As requested, this line (in <span class="text-blue-400">blue</span>) shows the cumulative sum of heads. It goes up by 1 when we get a "1" (Heads) and stays horizontal when we get a "0" (Tails). This line represents the total *count* of heads.</li>
+                <li><strong>The Running Frequency (Average):</strong> This line (in <span class="text-accent">orange</span>) is the one that demonstrates the law. It is calculated at each step as <code>(Total Heads so far) / (Total Tosses so far)</code>.</li>
+            </ol>
+            <p class="animated-element" style="animation-delay: 1.0s;">Watch how the orange line starts erratically (it can be 1.0 or 0.0 after the first toss!) but quickly stabilizes and "hugs" the <strong>0.5</strong> target line as the number of tosses increases.</p>
+            
+            <div id="simulation-section" class="not-prose mt-16 p-4 sm:p-6 rounded-lg border border-gray-700 bg-gray-900/50 animated-element" style="animation-delay: 1.2s;">
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-100 mb-4">Law of Large Numbers Simulation</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label for="numTosses" class="block text-sm font-medium text-gray-400">1. Number of Tosses (e.g., 2000):</label>
+                        <input type="number" id="numTosses" value="2000" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-accent focus:border-accent text-gray-200">
+                    </div>
+                    
+                    <div>
+                        <button id="runSimulationBtn" class="bg-accent hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-md transition duration-300 w-full">2. Run Simulation</button>
+                    </div>
+                    
+                    <hr class="border-gray-700"/>
+                    
+                    <div>
+                        <h4 class="font-bold text-gray-300">Simulation Results:</h4>
+                        <div class="mt-2 p-2 sm:p-3 bg-gray-800 rounded-md">
+                            <canvas id="llnChart"></canvas>
+                        </div>
+                    </div>
+                     <div>
+                        <label class="block text-sm font-medium text-gray-400">3. Analysis:</label>
+                        <div id="analysisResult" class="mt-1 p-3 bg-gray-800 border-gray-600 rounded-md text-gray-300 text-sm min-h-[50px]">Analysis will appear here...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Explanation Section -->
+            <div class="animated-element" style="animation-delay: 1.4s; margin-top: 4rem;">
+                <h2>Why Does This Happen?</h2>
+                <p>The Law of Large Numbers works because short-term deviations from the average are rendered insignificant by the sheer volume of "normal" events over the long run. </p>
+                <p>Imagine you toss the coin 100 times and, by pure chance, you get 60 heads (a 0.6 frequency). You are "up" by 10 heads from the expected 50. To get back to 0.5, you would need to get 10 *fewer* heads than average in the *next* 100 tosses (i.e., 40 heads). This is unlikely.</p>
+                <p>What's more likely is that over the *next* 9,900 tosses, you will get something very close to the average, like 4,950 heads. </p>
+                <ul>
+                    <li><strong>Total Heads:</strong> 60 (from first 100) + 4950 (from next 9900) = 5010</li>
+                    <li><strong>Total Tosses:</strong> 100 + 9900 = 10,000</li>
+                    <li><strong>New Frequency:</strong> 5010 / 10,000 = <strong>0.501</strong></li>
+                </ul>
+                <p>Even though you were never "corrected" for that initial lucky streak (you are still "up" by 10 from the 5000 you'd expect), that 10-head deviation becomes a tiny drop in the ocean of 10,000 trials. The *frequency* aligns with the probability, even if the *raw count* doesn't perfectly match the expectation.</p>
+            </div>
+            
+        </article>
+        
+    </div>
+
+    <footer class="max-w-4xl mx-auto w-full text-sm mt-16 text-center text-gray-500 px-4">
+        <p>&copy; 2025 Statistics Blog. All rights reserved.</p>
+        <p class="mt-2">Created by Enrico Garrapa - Matricola: 2222774</p>
+    </footer>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- DOM Elements ---
+        const numTossesEl = document.getElementById('numTosses');
+        const runBtn = document.getElementById('runSimulationBtn');
+        const analysisResultEl = document.getElementById('analysisResult');
+        const llnChartCanvas = document.getElementById('llnChart');
+        let llnChart = null;
+
+        const runSimulation = () => {
+            try {
+                const numTosses = parseInt(numTossesEl.value);
+                if (isNaN(numTosses) || numTosses <= 0) {
+                    analysisResultEl.innerHTML = `<span class="text-red-400">Error: Please enter a valid number of tosses.</span>`;
+                    return;
+                }
+
+                let sumOfHeads = 0;
+                const labels = [];
+                const pathData = [];
+                const frequencyData = [];
+
+                for (let i = 1; i <= numTosses; i++) {
+                    const toss = Math.random();
+                    let result = 0;
+                    
+                    if (toss >= 0.5) {
+                        result = 1;
+                        sumOfHeads++;
+                    }
+                    
+                    const currentFrequency = sumOfHeads / i;
+                    
+                    // Store data
+                    labels.push(i.toString());
+                    pathData.push(sumOfHeads); // The "path" is the cumulative sum
+                    frequencyData.push(currentFrequency);
+                }
+
+                // --- Update Chart ---
+                const chartData = {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Random Walk (Sum of Heads)',
+                            data: pathData,
+                            borderColor: 'rgba(59, 130, 246, 0.8)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 2,
+                            yAxisID: 'yPath',
+                            pointRadius: 0,
+                            fill: true,
+                        },
+                        {
+                            label: 'Running Frequency (Average)',
+                            data: frequencyData,
+                            borderColor: 'rgba(249, 115, 22, 1)',
+                            borderWidth: 3,
+                            yAxisID: 'yFreq',
+                            pointRadius: 0,
+                            fill: false,
+                        },
+                        {
+                            label: 'Theoretical Probability (0.5)',
+                            data: Array(numTosses).fill(0.5),
+                            borderColor: 'rgba(255, 255, 255, 0.4)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            yAxisID: 'yFreq',
+                            pointRadius: 0,
+                            fill: false,
+                        }
+                    ]
+                };
+
+                if (llnChart) {
+                    llnChart.data = chartData;
+                    llnChart.options.scales.yPath.max = numTosses; // Adjust path axis max
+                    llnChart.update();
+                } else {
+                    llnChart = new Chart(llnChartCanvas, {
+                        type: 'line',
+                        data: chartData,
+                        options: {
+                            responsive: true,
+                            animation: {
+                                duration: 800,
+                                easing: 'easeInOutQuart',
+                            },
+                            scales: {
+                                x: {
+                                    title: { display: true, text: 'Number of Tosses', color: '#9CA3AF' },
+                                    ticks: { 
+                                        color: '#9CA3AF',
+                                        // Auto-skip ticks to avoid clutter
+                                        autoSkip: true,
+                                        maxTicksLimit: 10 
+                                    },
+                                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                                },
+                                yPath: { // Left Y-axis for the path
+                                    type: 'linear',
+                                    position: 'left',
+                                    max: numTosses,
+                                    min: 0,
+                                    title: { display: true, text: 'Path (Sum of Heads)', color: 'rgba(59, 130, 246, 0.8)' },
+                                    ticks: { color: 'rgba(59, 130, 246, 0.8)' },
+                                    grid: { drawOnChartArea: false } // Only show grid for frequency
+                                },
+                                yFreq: { // Right Y-axis for the frequency
+                                    type: 'linear',
+                                    position: 'right',
+                                    max: 1.0,
+                                    min: 0.0,
+                                    title: { display: true, text: 'Frequency (Average)', color: 'rgba(249, 115, 22, 1)' },
+                                    ticks: { color: 'rgba(249, 115, 22, 1)' },
+                                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    labels: { color: '#E5E7EB' }
+                                },
+                                tooltip: {
+                                    mode: 'index',
+                                    intersect: false,
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                // --- Update Analysis Text ---
+                const finalFrequency = frequencyData[frequencyData.length - 1];
+                analysisResultEl.innerHTML = `After <b class="text-accent">${numTosses}</b> tosses, the total number of heads was <b class="text-accent">${sumOfHeads}</b>.<br>` +
+                                           `The final observed frequency is <b class="text-accent">${finalFrequency.toFixed(4)}</b>, which is very close to the theoretical probability of 0.5.`;
+
+            } catch (err) {
+                analysisResultEl.innerHTML = `<span class="text-red-400">Error: ${err.message}.</span>`;
+            }
+        };
+
+        runBtn.addEventListener('click', runSimulation);
+        runSimulation(); // Initial run on page load
+    });
+</script>
+</body>
+</html>
