@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    
+    <title>Recurrence Formulas for Mean & Variance - Statistics Blog</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <!-- Chart.js is not needed for this assignment -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        body {
+            font-family: 'Roboto Mono', monospace;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            animation: fadeIn 1s ease-in-out;
+            background-color: #121212;
+            color: #E5E7EB;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            background: url('data:image/svg+xml,%3Csvg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%" height="100%" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            opacity: 0.1;
+            z-index: 9999;
+        }
+
+        .tech-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(128, 128, 128, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(128, 128, 128, 0.1) 1px, transparent 1px);
+        }
+        .text-glow-accent {
+            text-shadow: 0 0 8px #F97316, 0 0 2px #F97316;
+        }
+        .animated-element {
+             animation: slideInUp 0.8s ease-out forwards;
+             opacity: 0;
+        }
+        .query-box {
+            background-color: #1f2937;
+            border-left: 4px solid #F97316;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .query-box code {
+            color: #9CA3AF;
+        }
+        .query-box .result {
+            color: #E5E7EB;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        /* Style for the C code block */
+        .code-block {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+            color: #d1d5db;
+        }
+        .code-block pre {
+            margin: 0;
+        }
+        .code-block code {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+        }
+        .code-block .comment {
+            color: #6b7280;
+        }
+        .code-block .keyword {
+            color: #f97316;
+        }
+        .code-block .function {
+            color: #34d399;
+        }
+        .code-block .string {
+            color: #fbbf24;
+        }
+        .code-block .number {
+            color: #60a5fa;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        'background-dark': "#121212",
+                        accent: '#F97316',
+                    },
+                    fontFamily: {
+                        display: ["Roboto Mono", "monospace"],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-background-dark text-gray-200">
+
+<div class="w-full min-h-screen px-4 sm:px-8 py-16 sm:py-24 bg-background-dark tech-grid">
+    <div class="max-w-4xl mx-auto flex flex-col">
+        
+        <header class="mb-12 animated-element">
+            <a href="../../index.html" class="inline-flex items-center text-accent hover:underline mb-8">
+                &lt;&lt;
+                Back to Home
+            </a>
+            <p class="text-sm text-gray-400">November 01, 2025</p>
+            
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mt-2 text-gray-100 leading-tight">
+                <span class="text-accent text-glow-accent">#6</span> 
+                Online Algorithms: Recurrence Formulas for Mean and Variance
+            </h1>
+        </header>
+
+        <article class="prose prose-invert max-w-none text-gray-300 md:prose-lg">
+            
+            <p class="animated-element" style="animation-delay: 0.2s;">In data analysis, we often work with data streams where numbers arrive one at a time. The "naive" way to calculate mean and variance is to store all the data, and when asked, iterate over the entire list. This is inefficient, especially for large datasets or real-time systems. A much better approach is to use <strong>recurrence formulas</strong>, also known as "online algorithms." These formulas allow us to update the mean and variance with each new data point, using only the previous state.</p>
+            
+            <h2 class="animated-element" style="animation-delay: 0.4s;">1. Recurrence Formula for the Mean</h2>
+            <p class="animated-element" style="animation-delay: 0.5s;">Let $\bar{x}_n$ be the mean of $n$ data points. The standard definition is:</p>
+            <p class="animated-element" style="animation-delay: 0.5s;">$$ \bar{x}_n = \frac{1}{n} \sum_{i=1}^n x_i $$</p>
+            <p class="animated-element" style="animation-delay: 0.6s;">We can split this sum into the sum of the first $n-1$ points and the new point, $x_n$:</p>
+            <p class="animated-element" style="animation-delay: 0.6s;">$$ \bar{x}_n = \frac{1}{n} \left( \left( \sum_{i=1}^{n-1} x_i \right) + x_n \right) $$</p>
+            <p class="animated-element" style="animation-delay: 0.7s;">We know that the sum of the first $n-1$ points is related to the previous mean, $\bar{x}_{n-1}$, by $\sum_{i=1}^{n-1} x_i = (n-1)\bar{x}_{n-1}$. Let's substitute this in:</p>
+            <p class="animated-element" style="animation-delay: 0.8s;">$$ \bar{x}_n = \frac{1}{n} \left( (n-1)\bar{x}_{n-1} + x_n \right) $$</p>
+            <p class="animated-element" style="animation-delay: 0.9s;">Distributing the $\frac{1}{n}$, we get:</p>
+            <p class="animated-element" style="animation-delay: 0.9s;">$$ \bar{x}_n = \frac{n-1}{n}\bar{x}_{n-1} + \frac{1}{n}x_n $$</p>
+            <p class="animated-element" style="animation-delay: 1.0s;">This is a valid recurrence formula, but we can simplify it to a more intuitive form by writing $\frac{n-1}{n}$ as $(1 - \frac{1}{n})$:</p>
+            <p class="animated-element" style="animation-delay: 1.0s;">$$ \bar{x}_n = (1 - \frac{1}{n})\bar{x}_{n-1} + \frac{1}{n}x_n = \bar{x}_{n-1} - \frac{1}{n}\bar{x}_{n-1} + \frac{1}{n}x_n $$</p>
+            <p class="animated-element" style="animation-delay: 1.1s;">Finally, we group the last two terms to get the simplest recurrence relation for the mean:</p>
+            <p class="animated-element" style="animation-delay: 1.2s;"><strong>Formula:</strong> <code>$\bar{x}_n = \bar{x}_{n-1} + \frac{1}{n}(x_n - \bar{x}_{n-1})$</code></p>
+            <p class="animated-element" style="animation-delay: 1.3s;">This formula is simple and elegant. It says the <strong>new mean</strong> is the <strong>old mean</strong> plus a small correction. The correction is the difference between the new value and the old mean, scaled by $\frac{1}{n}$. To use this, you only need to keep track of two numbers: the current count $n$ and the current mean $\bar{x}_n$.</p>
+            
+
+            <h2 class="animated-element" style="animation-delay: 1.4s;">2. Recurrence Formula for the Variance</h2>
+            <p class="animated-element" style="animation-delay: 1.5s;">Deriving the variance recurrence is more complex. A naive approach can suffer from "catastrophic cancellation," a numerical stability problem. The standard, robust method is <strong>Welford's online algorithm</strong>.</p>
+            <p class="animated-element" style="animation-delay: 1.6s;">This algorithm tracks $n$ (count), $\bar{x}_n$ (mean), and a new quantity, $M_{2,n}$, which is the sum of squares of differences from the current mean:</p>
+            <p class="animated-element" style="animation-delay: 1.6s;">$$ M_{2,n} = \sum_{i=1}^n (x_i - \bar{x}_n)^2 $$</p>
+            <p class="animated-element" style="animation-delay: 1.7s;">The (population) variance is simply $\sigma_n^2 = M_{2,n} / n$, and the sample variance is $s_n^2 = M_{2,n} / (n-1)$. So, if we can find a recurrence for $M_{2,n}$, we can find the variance.</p>
+            <p class="animated-element" style="animation-delay: 1.8s;">The derivation is involved, but it leads to this simple and powerful recurrence for $M_{2,n}$:</p>
+            <p class="animated-element" style="animation-delay: 1.9s;"><strong>Formula:</strong> <code>$M_{2,n} = M_{2,n-1} + (x_n - \bar{x}_{n-1})(x_n - \bar{x}_n)$</code></p>
+            
+            <h3 class="animated-element" style="animation-delay: 2.0s;">The Full Algorithm (Mean & Variance)</h3>
+            <p class="animated-element" style="animation-delay: 2.1s;">To calculate the mean and variance in a single pass, you only need to store three values: $n$ (count), $\bar{x}$ (mean), and $M_2$ (sum of squares).</p>
+            <p class="animated-element" style="animation-delay: 2.2s;">Initialize: $n=0$, $\bar{x}=0$, $M_2=0$.</p>
+            <p class="animated-element" style="animation-delay: 2.3s;">When a new value $x_n$ arrives:</p>
+            <ol>
+                <li>$n \leftarrow n + 1$</li>
+                <li>$\delta \leftarrow x_n - \bar{x}_{n-1}$  <em>(Difference from old mean)</em></li>
+                <li>$\bar{x}_n \leftarrow \bar{x}_{n-1} + \delta / n$  <em>(Update mean)</em></li>
+                <li>$\delta_2 \leftarrow x_n - \bar{x}_n$  <em>(Difference from new mean)</em></li>
+                <li>$M_{2,n} \leftarrow M_{2,n-1} + \delta \cdot \delta_2$  <em>(Update sum of squares)</em></li>
+            </ol>
+            <p class="animated-element" style="animation-delay: 2.4s;">After each step, the variance can be found:</p>
+            <ul>
+                <li><strong>Sample Variance:</strong> $s_n^2 = M_{2,n} / (n-1)$ (for $n > 1$)</li>
+                <li><strong>Population Variance:</strong> $\sigma_n^2 = M_{2,n} / n$</li>
+            </ul>
+
+            <div id="simulation-section" class="not-prose mt-16 p-4 sm:p-6 rounded-lg border border-gray-700 bg-gray-900/50 animated-element" style="animation-delay: 2.5s;">
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-100 mb-4">Online Algorithm Simulation</h2>
+                <p class="text-sm text-gray-400 mb-4">This simulation demonstrates the recurrence formulas. Enter a list of numbers, and it will iterate through them one by one, showing the state of $n$, Mean, and Sample Variance at each step.</p>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label for="inputText" class="block text-sm font-medium text-gray-400">1. Enter Data (comma-separated numbers):</label>
+                        <textarea id="inputText" rows="5" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-accent focus:border-accent text-gray-200">10, 20, 22, 25, 26, 28, 30, 150</textarea>
+                    </div>
+                    
+                    <div>
+                        <button id="runSimulationBtn" class="bg-accent hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-md transition duration-300 w-full">2. Run Step-by-Step Calculation</button>
+                    </div>
+                    
+                    <hr class="border-gray-700"/>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">3. Calculation Steps:</label>
+                        <div id="analysisResult" class="mt-1 p-3 bg-gray-800 border-gray-600 rounded-md text-gray-300 text-sm min-h-[100px] max-h-[300px] overflow-y-auto">Analysis will appear here...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- C Code Section Start -->
+            <div class="animated-element" style="animation-delay: 2.6s; margin-top: 4rem;">
+                <h2>Online Algorithm in C</h2>
+                <p>Below is a C program that implements Welford's online algorithm. It uses a <code>struct</code> to hold the state ($n$, $\bar{x}$, $M_2$) and updates this state as new numbers are provided by the user, printing the new mean and variance each time.</p>
+
+                <div class="code-block not-prose">
+                    <pre><code><span class="comment">// Include necessary libraries</span>
+<span class="keyword">#include</span> <span class="string">&lt;stdio.h&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;stdlib.h&gt;</span>
+
+<span class="comment">// A struct to hold the state of our "online" calculation</span>
+<span class="keyword">typedef</span> <span class="keyword">struct</span> {
+    <span class="keyword">long</span> <span class="keyword">long</span> count; <span class="comment">// n</span>
+    <span class="keyword">double</span> mean;      <span class="comment">// x_bar_n</span>
+    <span class="keyword">double</span> m2;        <span class="comment">// M_2,n (Sum of squares of diffs)</span>
+} WelfordState;
+
+<span class="comment">// Initialize a new state</span>
+<span class="keyword">void</span> <span class="function">init_state</span>(WelfordState *state) {
+    state->count = <span class="number">0</span>;
+    state->mean = <span class="number">0.0</span>;
+    state->m2 = <span class="number">0.0</span>;
+}
+
+<span class="comment">// Update the state with a new value using the recurrence formulas</span>
+<span class="keyword">void</span> <span class="function">update_state</span>(WelfordState *state, <span class="keyword">double</span> newValue) {
+    state->count++;
+    
+    <span class="keyword">double</span> delta = newValue - state->mean;
+    <span class="keyword">double</span> newMean = state->mean + delta / state->count;
+    <span class="keyword">double</span> delta2 = newValue - newMean;
+    
+    state->m2 += delta * delta2;
+    state->mean = newMean;
+}
+
+<span class="comment">// Get the current sample variance from the state</span>
+<span class="keyword">double</span> <span class="function">get_variance</span>(WelfordState *state) {
+    <span class="keyword">if</span> (state->count < <span class="number">2</span>) {
+        <span class="keyword">return</span> <span class="number">0.0</span>; <span class="comment">// Variance is undefined for n < 2</span>
+    }
+    <span class="keyword">return</span> state->m2 / (state->count - <span class="number">1</span>);
+}
+
+<span class="comment">// Get the current mean from the state</span>
+<span class="keyword">double</span> <span class="function">get_mean</span>(WelfordState *state) {
+    <span class="keyword">return</span> state->mean;
+}
+
+<span class="keyword">int</span> <span class="function">main</span>(<span class="keyword">void</span>) {
+    WelfordState state;
+    <span class="function">init_state</span>(&state);
+    
+    <span class="keyword">double</span> data[] = {<span class="number">10</span>, <span class="number">20</span>, <span class="number">22</span>, <span class="number">25</span>, <span class="number">26</span>, <span class="number">28</span>, <span class="number">30</span>, <span class="number">150</span>};
+    <span class="keyword">int</span> n = <span class="keyword">sizeof</span>(data) / <span class="keyword">sizeof</span>(data[<span class="number">0</span>]);
+
+    <span class="function">printf</span>(<span class="string">"--- Welford's Online Algorithm ---\n"</span>);
+    <span class="function">printf</span>(<span class="string">"Input | Count |      Mean | Sample Var.\n"</span>);
+    <span class="function">printf</span>(<span class="string">"---------------------------------------\n"</span>);
+
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < n; i++) {
+        <span class="function">update_state</span>(&state, data[i]);
+        <span class="function">printf</span>(
+            <span class="string">"%5.0f | %5lld | %10.3f | %10.3f\n"</span>,
+            data[i],
+            state.count,
+            <span class="function">get_mean</span>(&state),
+            <span class="function">get_variance</span>(&state)
+        );
+    }
+    
+    <span class="function">printf</span>(<span class="string">"---------------------------------------\n"</span>);
+    <span class="function">printf</span>(<span class="string">"Final Mean: %.3f\n"</span>, <span class="function">get_mean</span>(&state));
+    <span class="function">printf</span>(<span class="string">"Final Sample Variance: %.3f\n"</span>, <span class="function">get_variance</span>(&state));
+    
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre>
+                </div>
+                <p style="margin-top: 1.5rem;">This C code cleanly separates the state (<code>WelfordState</code>) from the logic (<code>update_state</code>). This method is not only memory-efficient (it doesn't store the data) but also numerically stable, making it ideal for real-world statistical libraries and applications.</p>
+            </div>
+            <!-- C Code Section End -->
+
+        </article>
+        
+    </div>
+
+    <footer class="max-w-4xl mx-auto w-full text-sm mt-16 text-center text-gray-500 px-4">
+        <p>&copy; 2025 Statistics Blog. All rights reserved.</p>
+        <p class="mt-2">Created by Enrico Garrapa - Matricola: 2222774</p>
+    </footer>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- DOM Elements for Recurrence Simulation ---
+        const dataInputEl = document.getElementById('inputText');
+        const runBtn = document.getElementById('runSimulationBtn');
+        const analysisResultEl = document.getElementById('analysisResult');
+        // No histogram canvas needed
+        // const dataHistogramCanvas = document.getElementById('dataHistogram');
+        // let dataHistogram = null;
+
+        // --- Statistical Analysis Functions ---
+
+        /**
+         * Parses the input text into an array of numbers.
+         */
+        const parseInput = (text) => {
+            const numbers = text
+                .split(',') // Split by comma
+                .map(s => s.trim()) // Remove whitespace
+                .filter(s => s.length > 0) // Remove empty strings
+                .map(s => parseFloat(s)) // Convert to number
+                .filter(n => !isNaN(n)); // Filter out invalid numbers (NaN)
+            
+            // Do NOT sort for a recurrence relation, order matters.
+            return numbers;
+        };
+
+        const runSimulation = () => {
+            try {
+                const dataText = dataInputEl.value;
+                const data = parseInput(dataText);
+
+                if (data.length === 0) {
+                    analysisResultEl.innerHTML = `<span class="text-red-400">Error: No valid numbers entered. Please enter comma-separated numbers.</span>`;
+                    return;
+                }
+                
+                // --- Initialize State ---
+                let count = 0;
+                let mean = 0.0;
+                let m2 = 0.0;
+                
+                // Clear previous results
+                analysisResultEl.innerHTML = "";
+
+                // --- Loop through data and apply recurrence ---
+                for (const newValue of data) {
+                    count++;
+                    
+                    const delta = newValue - mean;
+                    const newMean = mean + delta / count;
+                    const delta2 = newValue - newMean;
+                    
+                    m2 += delta * delta2;
+                    mean = newMean;
+                    
+                    let variance = 0.0;
+                    if (count > 1) {
+                        variance = m2 / (count - 1); // Sample Variance
+                    }
+
+                    // --- 2. Display Step Result ---
+                    const stepResult = document.createElement('div');
+                    stepResult.className = 'p-2 border-b border-gray-700';
+                    stepResult.innerHTML = 
+                        `<b>Step ${count}</b> (Adding: <b class="text-accent">${newValue}</b>)<br>` +
+                        `<span class="ml-4">Mean: <b class="text-green-400">${mean.toFixed(3)}</b></span>` +
+                        `<span class="ml-4">Sample Var: <b class="text-blue-400">${variance.toFixed(3)}</b></span>`;
+                    
+                    analysisResultEl.appendChild(stepResult);
+                }
+                
+                // Scroll to the bottom of the results
+                analysisResultEl.scrollTop = analysisResultEl.scrollHeight;
+
+            } catch (err) {
+                analysisResultEl.innerHTML = `<span class="text-red-400">Error: ${err.message}.</span>`;
+            }
+        };
+
+        runBtn.addEventListener('click', runSimulation);
+        runSimulation(); // Initial run on page load
+    });
+</script>
+</body>
+</html>
+

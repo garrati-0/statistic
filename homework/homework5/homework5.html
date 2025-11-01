@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    
+    <title>Measures of Location: Mean, Median, Mode - Statistics Blog</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <!-- We need Chart.js for the new histogram -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        body {
+            font-family: 'Roboto Mono', monospace;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            animation: fadeIn 1s ease-in-out;
+            background-color: #121212;
+            color: #E5E7EB;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            background: url('data:image/svg+xml,%3Csvg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%" height="100%" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            opacity: 0.1;
+            z-index: 9999;
+        }
+
+        .tech-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(128, 128, 128, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(128, 128, 128, 0.1) 1px, transparent 1px);
+        }
+        .text-glow-accent {
+            text-shadow: 0 0 8px #F97316, 0 0 2px #F97316;
+        }
+        .animated-element {
+             animation: slideInUp 0.8s ease-out forwards;
+             opacity: 0;
+        }
+        .query-box {
+            background-color: #1f2937;
+            border-left: 4px solid #F97316;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .query-box code {
+            color: #9CA3AF;
+        }
+        .query-box .result {
+            color: #E5E7EB;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        /* Style for the C code block */
+        .code-block {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+            color: #d1d5db;
+        }
+        .code-block pre {
+            margin: 0;
+        }
+        .code-block code {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+        }
+        .code-block .comment {
+            color: #6b7280;
+        }
+        .code-block .keyword {
+            color: #f97316;
+        }
+        .code-block .function {
+            color: #34d399;
+        }
+        .code-block .string {
+            color: #fbbf24;
+        }
+        .code-block .number {
+            color: #60a5fa;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        'background-dark': "#121212",
+                        accent: '#F97316',
+                    },
+                    fontFamily: {
+                        display: ["Roboto Mono", "monospace"],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-background-dark text-gray-200">
+
+<div class="w-full min-h-screen px-4 sm:px-8 py-16 sm:py-24 bg-background-dark tech-grid">
+    <div class="max-w-4xl mx-auto flex flex-col">
+        
+        <header class="mb-12 animated-element">
+            <a href="../../index.html" class="inline-flex items-center text-accent hover:underline mb-8">
+                &lt;&lt;
+                Back to Home
+            </a>
+            <p class="text-sm text-gray-400">October 31, 2025</p>
+            
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mt-2 text-gray-100 leading-tight">
+                <span class="text-accent text-glow-accent">#5</span> 
+                Understanding Averages: Which "Measure of Location" is Best?
+            </h1>
+        </header>
+
+        <article class="prose prose-invert max-w-none text-gray-300 md:prose-lg">
+            
+            <p class="animated-element" style="animation-delay: 0.2s;">In statistics, we often want to summarize a large set of data with a single value. This value, which describes the "center" or "typical" data point, is called a <strong>measure of location</strong> or <strong>measure of central tendency</strong>. The word "average" is a non-technical term for this. But as it turns out, there are several different ways to calculate this "center," and the one you choose matters—a lot.</p>
+            
+            <h2 class="animated-element" style="animation-delay: 0.4s;">1. The Arithmetic Mean (The "Average")</h2>
+            <p class="animated-element" style="animation-delay: 0.5s;">This is what most people think of as the "average." You calculate it by adding up all the values in a dataset and then dividing by the number of values.</p>
+            <p class="animated-element" style="animation-delay: 0.6s;"><strong>Formula:</strong> <code>Mean = (x₁ + x₂ + ... + xₙ) / n</code></p>
+            <ul>
+                <li><strong>When is it useful?</strong> The mean is excellent for data that is <strong>symmetrically distributed</strong> (like a "bell curve") and doesn't have extreme outliers. For example, the average height in a classroom or the average test score (assuming no one got a 0).</li>
+                <li><strong>When is it misleading?</strong> The mean is extremely sensitive to <strong>outliers</strong> (exceptionally high or low values). If you have a dataset of salaries <code>[50k, 60k, 55k, 70k, 1,000k]</code>, the mean salary is <code>247k</code>. This is not representative of a typical employee, as it's heavily skewed by the one <code>1,000k</code> salary.</li>
+            </ul>
+
+            <h2 class="animated-element" style="animation-delay: 0.8s;">2. The Median (The Middle Ground)</h2>
+            <p class="animated-element" style="animation-delay: 0.9s;">The median is the "middle" value in a dataset that has been sorted from smallest to largest. If the dataset has an even number of values, the median is the mean of the two middle values.</p>
+            <ol>
+                <li><strong>Step 1:</strong> Sort the data (e.g., <code>[1, 5, 2]</code> becomes <code>[1, 2, 5]</code>).</li>
+                <li><strong>Step 2:</strong> Find the middle value. In <code>[1, 2, 5]</code>, the median is <code>2</code>.</li>
+                <li><strong>Step 3 (Even set):</strong> In <code>[1, 2, 5, 8]</code>, the middle values are <code>2</code> and <code>5</code>. The median is <code>(2 + 5) / 2 = 3.5</code>.</li>
+            </ol>
+            <ul>
+                <li><strong>When is it useful?</strong> The median is the "go-to" average when your data is <strong>skewed</strong> or has <strong>outliers</strong>. This is why you always hear about "median income" or "median house price." In our salary example <code>[50k, 55k, 60k, 70k, 1,000k]</code>, the median is <code>60k</code>. This is a much better representation of a "typical" salary than the mean of <code>247k</code>.</li>
+            </ul>
+
+            <h2 class="animated-element" style="animation-delay: 1.2s;">3. The Mode (The Most Popular)</h2>
+            <p class="animated-element" style="animation-delay: 1.3s;">The mode is simply the value that appears most frequently in the dataset. A dataset can have no mode (if all values are unique) or multiple modes (e.g., "bimodal").</p>
+            <p class="animated-element" style="animation-delay: 1.4s;">In the set <code>[1, 2, 2, 3, 4, 4, 5]</code>, the modes are <code>2</code> and <code>4</code>.</p>
+            <ul>
+                <li><strong>When is it useful?</strong> The mode is the only measure of central tendency that works for <strong>categorical data</strong> (non-numerical data). For example, the "average" t-shirt size sold is the mode (e.g., "Large"). It's also useful for finding "peaks" in data.</li>
+            </ul>
+            
+            <h2 class="animated-element" style="animation-delay: 1.6s;">Other Proposed Averages</h2>
+            <p class="animated-element" style="animation-delay: 1.7s;">The "big three" aren't the only options. Others are useful in specific circumstances:</p>
+            <ul>
+                <li><strong>Geometric Mean:</strong> Used for data that represents growth rates or ratios (e.g., average investment return over several years).</li>
+                <li><strong>Harmonic Mean:</strong> Used for averaging rates or speeds (e.g., calculating your average speed over a round trip).</li>
+                <li><strong>Trimmed Mean:</strong> A compromise between the mean and median. You "trim" a certain percentage (e.g., 10%) of the highest and lowest values, then calculate the mean of what's left. This reduces the effect of outliers.</li>
+            </ul>
+
+            <h2 class="animated-element" style="animation-delay: 1.8s;">Conclusion: So Which is Best?</h2>
+            <p class="animated-element" style="animation-delay: 1.9s;">There is no single "best" average. The most useful one depends entirely on your data and the question you are trying to answer.</p>
+            <ul>
+                <li>For symmetrical data with no outliers: Use the <strong>Mean</strong>.</li>
+                <li>For skewed data or data with outliers: Use the <strong>Median</strong>.</li>
+                <li>For categorical data or finding the most common value: Use the <strong>Mode</strong>.</li>
+            </ul>
+
+            <div id="simulation-section" class="not-prose mt-16 p-4 sm:p-6 rounded-lg border border-gray-700 bg-gray-900/50 animated-element" style="animation-delay: 2.0s;">
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-100 mb-4">Interactive Averages Calculator</h2>
+                <p class="text-sm text-gray-400 mb-4">This simulation calculates the mean, median, and mode for a dataset you provide. It also generates a histogram to visualize the data's distribution. Try adding an outlier (like <code>1000</code>) to see how the mean changes!</p>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label for="inputText" class="block text-sm font-medium text-gray-400">1. Enter Data (comma-separated numbers):</label>
+                        <textarea id="inputText" rows="5" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-accent focus:border-accent text-gray-200">10, 20, 22, 25, 26, 28, 30, 35, 38, 40, 41, 42, 43, 44, 50, 55, 60, 150</textarea>
+                    </div>
+                    
+                    <div>
+                        <button id="runSimulationBtn" class="bg-accent hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-md transition duration-300 w-full">2. Calculate Averages & Draw Histogram</button>
+                    </div>
+                    
+                    <hr class="border-gray-700"/>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">3. Calculated Measures:</label>
+                        <div id="analysisResult" class="mt-1 p-3 bg-gray-800 border-gray-600 rounded-md text-gray-300 text-sm min-h-[100px]">Analysis will appear here...</div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-gray-300">4. Data Distribution (Histogram):</h4>
+                        <div class="mt-2 p-2 sm:p-3 bg-gray-800 rounded-md">
+                            <canvas id="dataHistogram"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- C Code Section Start -->
+            <div class="animated-element" style="animation-delay: 2.1s; margin-top: 4rem;">
+                <h2>Calculating Averages in C</h2>
+                <p>The simulation above provides an interactive way to explore averages. Below is a simple C program demonstrating how to calculate the mean, median (which requires sorting), and mode from a basic integer array.</p>
+
+                <div class="code-block not-prose">
+                    <pre><code><span class="comment">// Include necessary libraries</span>
+<span class="keyword">#include</span> <span class="string">&lt;stdio.h&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;stdlib.h&gt;</span> <span class="comment">// For qsort</span>
+<span class="keyword">#include</span> <span class="string">&lt;string.h&gt;</span> <span class="comment">// For memset</span>
+
+<span class="comment">// Comparison function for qsort (for integers)</span>
+<span class="keyword">int</span> <span class="function">compare</span>(<span class="keyword">const</span> <span class="keyword">void</span> *a, <span class="keyword">const</span> <span class="keyword">void</span> *b) {
+    <span class="keyword">return</span> (*(<span class="keyword">int</span>*)a - *(<span class="keyword">int</span>*)b);
+}
+
+<span class="comment">// 1. Calculates the Mean</span>
+<span class="keyword">double</span> <span class="function">calculate_mean</span>(<span class="keyword">int</span> data[], <span class="keyword">int</span> n) {
+    <span class="keyword">double</span> sum = <span class="number">0.0</span>;
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < n; i++) {
+        sum += data[i];
+    }
+    <span class="keyword">return</span> sum / n;
+}
+
+<span class="comment">// 2. Calculates the Median (Assumes data is already sorted)</span>
+<span class="keyword">double</span> <span class="function">calculate_median</span>(<span class="keyword">int</span> sorted_data[], <span class="keyword">int</span> n) {
+    <span class="keyword">if</span> (n % <span class="number">2</span> == <span class="number">1</span>) {
+        <span class="comment">// Odd number of elements</span>
+        <span class="keyword">return</span> sorted_data[n / <span class="number">2</span>];
+    } <span class="keyword">else</span> {
+        <span class="comment">// Even number of elements</span>
+        <span class="keyword">return</span> (sorted_data[n / <span class="number">2</span> - <span class="number">1</span>] + sorted_data[n / <span class="number">2</span>]) / <span class="number">2.0</span>;
+    }
+}
+
+<span class="comment">// 3. Calculates the Mode (Assumes data is already sorted)</span>
+<span class="keyword">int</span> <span class="function">calculate_mode</span>(<span class="keyword">int</span> sorted_data[], <span class="keyword">int</span> n) {
+    <span class="keyword">int</span> mode = sorted_data[<span class="number">0</span>];
+    <span class="keyword">int</span> max_count = <span class="number">0</span>;
+    
+    <span class="keyword">int</span> current_val = sorted_data[<span class="number">0</span>];
+    <span class="keyword">int</span> current_count = <span class="number">0</span>;
+
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < n; i++) {
+        <span class="keyword">if</span> (sorted_data[i] == current_val) {
+            current_count++;
+        } <span class="keyword">else</span> {
+            <span class="keyword">if</span> (current_count > max_count) {
+                max_count = current_count;
+                mode = current_val;
+            }
+            current_val = sorted_data[i];
+            current_count = <span class="number">1</span>;
+        }
+    }
+    
+    <span class="comment">// Check the last run</span>
+    <span class="keyword">if</span> (current_count > max_count) {
+        max_count = current_count;
+        mode = current_val;
+    }
+    
+    <span class{
+    }
+    <span class="keyword">return</span> mode;
+}
+
+<span class="keyword">int</span> <span class="function">main</span>(<span class="keyword">void</span>) {
+    <span class="keyword">int</span> data[] = {<span class="number">10</span>, <span class="number">20</span>, <span class="number">22</span>, <span class="number">25</span>, <span class="number">26</span>, <span class="number">28</span>, <span class="number">30</span>, <span class="number">30</span>, <span class="number">40</span>, <span class="number">150</span>};
+    <span class="keyword">int</span> n = <span class="keyword">sizeof</span>(data) / <span class="keyword">sizeof</span>(data[<span class="number">0</span>]);
+
+    <span class="function">printf</span>(<span class="string">"Data: [10, 20, 22, 25, 26, 28, 30, 30, 40, 150]\n"</span>);
+    <span class="function">printf</span>(<span class="string">"Total elements: %d\n"</span>, n);
+
+    <span class="comment">// --- Mean ---</span>
+    <span class="keyword">double</span> mean = <span class="function">calculate_mean</span>(data, n);
+    <span class="function">printf</span>(<span class="string">"1. Mean: %.2f\n"</span>, mean);
+    
+    <span class="comment">// --- Median ---</span>
+    <span class="comment">// We must sort the data to find the median and mode</span>
+    <span class="function">qsort</span>(data, n, <span class="keyword">sizeof</span>(<span class="keyword">int</span>), compare);
+    <span class="keyword">double</span> median = <span class="function">calculate_median</span>(data, n);
+    <span class="function">printf</span>(<span class="string">"2. Median: %.2f\n"</span>, median);
+
+    <span class="comment">// --- Mode ---</span>
+    <span class="keyword">int</span> mode = <span class="function">calculate_mode</span>(data, n);
+    <span class="function">printf</span>(<span class="string">"3. Mode: %d\n"</span>, mode);
+
+    <span class="function">printf</span>(<span class="string">"\nNotice the Mean (38.10) is pulled up by the outlier (150),\n"</span>);
+    <span class="function">printf</span>(<span class="string">"while the Median (27.00) is a better 'center' for this data.\n"</span>);
+
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre>
+                </div>
+                <p style="margin-top: 1.5rem;">This C code shows the fundamental logic. The <code>qsort</code> function is essential for finding the median. Once the data is sorted, finding both the median and the mode becomes a much simpler task. As the output of this C code notes, the mean is sensitive to the <code>150</code> outlier, while the median is "robust" to it.</p>
+            </div>
+            <!-- C Code Section End -->
+
+        </article>
+        
+    </div>
+
+    <footer class="max-w-4xl mx-auto w-full text-sm mt-16 text-center text-gray-500 px-4">
+        <p>&copy; 2025 Statistics Blog. All rights reserved.</p>
+        <p class="mt-2">Created by Enrico Garrapa - Matricola: 2222774</p>
+    </footer>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- DOM Elements for Averages Simulation ---
+        const dataInputEl = document.getElementById('inputText');
+        const runBtn = document.getElementById('runSimulationBtn');
+        const analysisResultEl = document.getElementById('analysisResult');
+        const dataHistogramCanvas = document.getElementById('dataHistogram');
+        let dataHistogram = null;
+
+        // --- Statistical Analysis Functions ---
+
+        /**
+         * Parses the input text into a sorted array of numbers.
+         */
+        const parseInput = (text) => {
+            const numbers = text
+                .split(',') // Split by comma
+                .map(s => s.trim()) // Remove whitespace
+                .filter(s => s.length > 0) // Remove empty strings
+                .map(s => parseFloat(s)) // Convert to number
+                .filter(n => !isNaN(n)); // Filter out invalid numbers (NaN)
+            
+            // Sort the array for median and mode calculation
+            numbers.sort((a, b) => a - b);
+            return numbers;
+        };
+
+        /**
+         * Calculates the mean of an array of numbers.
+         */
+        const calculateMean = (data) => {
+            if (data.length === 0) return 0;
+            const sum = data.reduce((acc, val) => acc + val, 0);
+            return sum / data.length;
+        };
+
+        /**
+         * Calculates the median of a *sorted* array of numbers.
+         */
+        const calculateMedian = (sortedData) => {
+            if (sortedData.length === 0) return 0;
+            const mid = Math.floor(sortedData.length / 2);
+            
+            if (sortedData.length % 2 === 1) {
+                // Odd number of elements
+                return sortedData[mid];
+            } else {
+                // Even number of elements
+                return (sortedData[mid - 1] + sortedData[mid]) / 2.0;
+            }
+        };
+
+        /**
+         * Calculates the mode(s) of a *sorted* array of numbers.
+         */
+        const calculateMode = (sortedData) => {
+            if (sortedData.length === 0) return "N/A";
+            
+            let modes = [];
+            let maxCount = 0;
+            
+            let currentVal = sortedData[0];
+            let currentCount = 0;
+
+            for (let i = 0; i < sortedData.length; i++) {
+                if (sortedData[i] === currentVal) {
+                    currentCount++;
+                } else {
+                    if (currentCount > maxCount) {
+                        maxCount = currentCount;
+                        modes = [currentVal];
+                    } else if (currentCount === maxCount) {
+                        modes.push(currentVal);
+                    }
+                    currentVal = sortedData[i];
+                    currentCount = 1;
+                }
+            }
+            
+            // Check the last run
+            if (currentCount > maxCount) {
+                modes = [currentVal];
+            } else if (currentCount === maxCount) {
+                modes.push(currentVal);
+            }
+            
+            if (maxCount <= 1) return "N/A (no repeating values)";
+            
+            return modes.join(', ');
+        };
+
+        /**
+         * Updates the histogram chart with the new data.
+         */
+        const updateHistogram = (data) => {
+            if (data.length === 0) {
+                 if (dataHistogram) {
+                    dataHistogram.destroy();
+                    dataHistogram = null;
+                 }
+                return;
+            }
+
+            // --- Binning logic for histogram ---
+            const min = data[0];
+            const max = data[data.length - 1];
+            
+            // Decide on number of bins (e.g., Sturges' formula or sqrt)
+            let numBins = Math.ceil(Math.sqrt(data.length));
+            if (numBins < 3 && data.length > 2) numBins = 3;
+            if (numBins > 20) numBins = 20; // Cap at 20 bins
+            if (data.length < 5) numBins = data.length;
+            if (max === min) numBins = 1; // Special case
+
+            const binWidth = (max - min) / numBins;
+            const bins = new Array(numBins).fill(0);
+            const labels = [];
+
+            // Create labels and initialize bins
+            for (let i = 0; i < numBins; i++) {
+                const binStart = min + i * binWidth;
+                const binEnd = binStart + binWidth;
+                if (numBins === 1) {
+                    labels.push(`${binStart.toFixed(1)}`);
+                } else {
+                    labels.push(`${binStart.toFixed(1)} - ${binEnd.toFixed(1)}`);
+                }
+            }
+            if (numBins === 1) bins[0] = data.length;
+            else {
+                 // Populate bins
+                for (const val of data) {
+                    let binIndex = Math.floor((val - min) / binWidth);
+                    // Handle the max value, which might fall outside
+                    if (binIndex === numBins) binIndex--; 
+                    bins[binIndex]++;
+                }
+            }
+
+            const chartData = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Frequency (Count)',
+                        data: bins,
+                        backgroundColor: 'rgba(249, 115, 22, 0.6)',
+                        borderColor: 'rgba(249, 115, 22, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            };
+
+            if (dataHistogram) {
+                dataHistogram.data = chartData;
+                dataHistogram.update();
+            } else {
+                dataHistogram = new Chart(dataHistogramCanvas, {
+                    type: 'bar',
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        animation: {
+                            duration: 800,
+                            easing: 'easeInOutQuart',
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Frequency', color: '#9CA3AF' },
+                                ticks: { color: '#9CA3AF', precision: 0 },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            },
+                            x: {
+                                title: { display: true, text: 'Data Bins', color: '#9CA3AF' },
+                                ticks: { color: '#9CA3AF' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: { color: '#E5E7EB' }
+                            },
+                        }
+                    }
+                });
+            }
+        };
+
+        const runSimulation = () => {
+            try {
+                const dataText = dataInputEl.value;
+                const data = parseInput(dataText);
+
+                if (data.length === 0) {
+                    analysisResultEl.innerHTML = `<span class="text-red-400">Error: No valid numbers entered. Please enter comma-separated numbers.</span>`;
+                    updateHistogram([]); // Clear the chart
+                    return;
+                }
+                
+                // --- 1. Calculate Measures ---
+                const mean = calculateMean(data);
+                const median = calculateMedian(data); // data is already sorted by parseInput
+                const mode = calculateMode(data); // data is already sorted
+
+                // --- 2. Display Results ---
+                analysisResultEl.innerHTML = 
+                    `<div class="grid grid-cols-1 sm:grid-cols-3 gap-2">` +
+                    `  <div class="p-3 bg-gray-700 rounded-md">` +
+                    `    <div class="text-sm text-gray-400">Mean (The "Average")</div>` +
+                    `    <div class="text-2xl font-bold text-accent">${mean.toFixed(3)}</div>` +
+                    `  </div>` +
+                    `  <div class="p-3 bg-gray-700 rounded-md">` +
+                    `    <div class="text-sm text-gray-400">Median (The "Middle")</div>` +
+                    `    <div class="text-2xl font-bold text-accent">${median.toFixed(3)}</div>` +
+                    `  </div>` +
+                    `  <div class="p-3 bg-gray-700 rounded-md">` +
+                    `    <div class="text-sm text-gray-400">Mode (Most Frequent)</div>` +
+                    `    <div class="text-2xl font-bold text-accent">${mode}</div>` +
+                    `  </div>` +
+                    `</div>` +
+                    `<p class="text-xs text-gray-400 mt-2"><b>Data (Sorted):</b> ${data.join(', ')}</p>` +
+                    `<p class="text-xs text-gray-400"><b>Count (n):</b> ${data.length}</p>`;
+                
+                // --- 3. Update Chart ---
+                updateHistogram(data);
+
+            } catch (err) {
+                analysisResultEl.innerHTML = `<span class="text-red-400">Error: ${err.message}.</span>`;
+            }
+        };
+
+        runBtn.addEventListener('click', runSimulation);
+        runSimulation(); // Initial run on page load
+    });
+</script>
+</body>
+</html>
