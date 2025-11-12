@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en" class="dark"> <!-- Changed lang to "en" -->
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    
+    <title>HMW7: Server Security, Random Walks, and Binomial Convergence</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        body {
+            font-family: 'Roboto Mono', monospace;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            animation: fadeIn 1s ease-in-out;
+            background-color: #121212;
+            color: #E5E7EB;
+        }
+        
+        /* Grid and noise style from template */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            background: url('data:image/svg+xml,%3Csvg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%" height="100%" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            opacity: 0.1;
+            z-index: 9999;
+        }
+        .tech-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(128, 128, 128, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(128, 128, 128, 0.1) 1px, transparent 1px);
+        }
+        .text-glow-accent {
+            text-shadow: 0 0 8px #F97316, 0 0 2px #F97316;
+        }
+        .animated-element {
+             animation: slideInUp 0.8s ease-out forwards;
+             opacity: 0;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        'background-dark': "#121212",
+                        accent: '#F97316',
+                    },
+                    fontFamily: {
+                        display: ["Roboto Mono", "monospace"],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-background-dark text-gray-200">
+
+<div class="w-full min-h-screen px-4 sm:px-8 py-16 sm:py-24 bg-background-dark tech-grid">
+    <div class="max-w-6xl mx-auto flex flex-col">
+        
+        <header class="mb-12 animated-element">
+             <a href="../../index.html" class="inline-flex items-center text-accent hover:underline mb-8">
+                &lt;&lt;
+                Back to Home
+            </a>
+            <p class="text-sm text-gray-400">November 08, 2025</p>
+            
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mt-2 text-gray-100 leading-tight">
+                <span class="text-accent text-glow-accent">#7</span> 
+                Security Simulation, Random Walks, and Binomial Convergence
+            </h1>
+        </header>
+
+        <article class="prose prose-invert max-w-none text-gray-300 md:prose-lg">
+            
+            <p class="animated-element" style="animation-delay: 0.2s;">This homework simulates the security of a server over <code>n</code> weeks. Each week, <code>m</code> attackers attempt to breach the server, each with a probability <code>p</code> of success.</p>
+            <ul>
+                <li>If the server remains secure (all <code>m</code> attackers fail), its cumulative score increases by <code>+1</code>.</li>
+                <li>If the server is breached (at least one attacker succeeds), the score decreases by <code>-1</code>.</li>
+            </ul>
+            <p class="animated-element" style="animation-delay: 0.4s;">This process is a direct parallel to a <strong>1D Random Walk</strong>. We will run thousands of trajectories (simulations) to observe the distribution of final scores. We will compare this empirical distribution with the theoretical <strong>Binomial distribution</strong> to see how the simulated data converges to the mathematical model as <code>n</code> and <code>m</code> increase.</p>
+        </article>
+        
+        <!-- Simulation Section -->
+        <div id="simulation-section" class="not-prose mt-16 p-4 sm:p-6 rounded-lg border border-gray-700 bg-gray-900/50 animated-element" style="animation-delay: 0.6s;">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-100 mb-6">Simulation Parameters</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div>
+                    <label for="nWeeks" class="block text-sm font-medium text-gray-400">1. Weeks (n):</label>
+                    <input type="number" id="nWeeks" value="50" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-accent focus:border-accent text-gray-200">
+                </div>
+                <div>
+                    <label for="mAttackers" class="block text-sm font-medium text-gray-400">2. Attackers (m):</label>
+                    <input type="number" id="mAttackers" value="10" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-accent focus:border-accent text-gray-200">
+                </div>
+                <div>
+                    <label for="pBreach" class="block text-sm font-medium text-gray-400">3. Breach Prob. (p):</label>
+                    <input type="number" id="pBreach" value="0.05" step="0.01" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-accent focus:border-accent text-gray-200">
+                </div>
+                 <div>
+                    <label for="numTrajectories" class="block text-sm font-medium text-gray-400">4. Trajectories:</label>
+                    <input type="number" id="numTrajectories" value="10000" step="1000" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-accent focus:border-accent text-gray-200">
+                </div>
+            </div>
+            
+            <div>
+                <button id="runSimulationBtn" class="bg-accent hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-md transition duration-300 w-full text-lg">Run Simulation</button>
+            </div>
+            
+            <hr class="border-gray-700 my-6"/>
+
+            <!-- Analysis and Results Section -->
+            <div>
+                <h3 class="text-lg sm:text-xl font-bold text-gray-300">Statistical Analysis</h3>
+                <div id="analysisResult" class="mt-3 p-4 bg-gray-800 border-gray-600 rounded-md text-gray-300 text-sm min-h-[100px] whitespace-pre-wrap">Analysis will appear here...</div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+                <!-- Trajectory Chart -->
+                <div>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-300 mb-4">Sample Trajectories (Random Walks)</h3>
+                    <div class="mt-2 p-2 sm:p-3 bg-gray-800 rounded-md">
+                        <canvas id="trajectoryChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Distribution Chart -->
+                <div>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-300 mb-4">Final Score Distribution vs. Binomial</h3>
+                     <div class="mt-2 p-2 sm:p-3 bg-gray-800 rounded-md">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer class="max-w-4xl mx-auto w-full text-sm mt-16 text-center text-gray-500 px-4">
+        <p>&copy; 2025 Statistics Blog. All rights reserved.</p>
+        <p class="mt-2">Created by Enrico Garrapa - Matricola: 2222774</p>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DOM Elements ---
+        const nWeeksEl = document.getElementById('nWeeks');
+        const mAttackersEl = document.getElementById('mAttackers');
+        const pBreachEl = document.getElementById('pBreach');
+        const numTrajectoriesEl = document.getElementById('numTrajectories');
+        const runBtn = document.getElementById('runSimulationBtn');
+        const analysisResultEl = document.getElementById('analysisResult');
+        
+        const trajectoryCanvas = document.getElementById('trajectoryChart');
+        const distributionCanvas = document.getElementById('distributionChart');
+        
+        let trajectoryChart = null;
+        let distributionChart = null;
+
+        // --- Math Functions ---
+
+        /**
+         * Calculates the binomial coefficient C(n, k)
+         * Uses a stable multiplicative formula to avoid overflow.
+         */
+        function binomialCoeff(n, k) {
+            if (k < 0 || k > n) return 0;
+            if (k === 0 || k === n) return 1;
+            if (k > n / 2) k = n - k; // Use symmetry
+            let res = 1;
+            for (let i = 1; i <= k; i++) {
+                res = res * (n - i + 1) / i;
+            }
+            return res;
+        }
+
+        // --- Chart Update Functions ---
+
+        function updateTrajectoryChart(trajectoriesData, n) {
+            const labels = Array.from({ length: n + 1 }, (_, i) => i === 0 ? 'Start' : `W${i}`);
+            
+            const datasets = trajectoriesData.map((trajectory, index) => {
+                const colors = ['#F97316', '#3B82F6', '#10B981', '#EC4899', '#8B5CF6'];
+                const color = colors[index % colors.length];
+                return {
+                    label: `Trajectory ${index + 1}`,
+                    data: trajectory,
+                    borderColor: color,
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    tension: 0.1
+                };
+            });
+
+            if (trajectoryChart) {
+                trajectoryChart.destroy();
+            }
+            
+            trajectoryChart = new Chart(trajectoryCanvas, {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    animation: { duration: 500 },
+                    scales: {
+                        y: { 
+                            ticks: { color: '#9CA3AF' }, 
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            title: { display: true, text: 'Cumulative Score', color: '#E5E7EB' }
+                        },
+                        x: { 
+                            ticks: { color: '#9CA3AF' }, 
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            title: { display: true, text: 'Weeks (n)', color: '#E5E7EB' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#E5E7EB' } }
+                    }
+                }
+            });
+        }
+
+        function updateDistributionChart(finalScores, n, numTrajectories, probSecure) {
+            const probBreach = 1 - probSecure;
+            const labels = [];
+            const simData = [];
+            const theoryData = [];
+
+            // Build the aligned data arrays
+            for (let s = -n; s <= n; s += 2) {
+                labels.push(s.toString()); // Label for the final score 's'
+                
+                // Simulated data
+                simData.push(finalScores[s] || 0);
+
+                // Theoretical data (Binomial)
+                // Score S = k - (n - k) = 2k - n  =>  k = (S + n) / 2
+                const k = (s + n) / 2;
+                if (k >= 0 && k <= n && Number.isInteger(k)) {
+                    const prob_k = binomialCoeff(n, k) * Math.pow(probSecure, k) * Math.pow(probBreach, n - k);
+                    const expectedCount = prob_k * numTrajectories;
+                    theoryData.push(expectedCount);
+                } else {
+                    theoryData.push(0); // Impossible score
+                }
+            }
+
+            if (distributionChart) {
+                distributionChart.destroy();
+            }
+
+            distributionChart = new Chart(distributionCanvas, {
+                type: 'bar', // 'bar' type for simulation
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Simulation (Counts)',
+                            data: simData,
+                            backgroundColor: 'rgba(249, 115, 22, 0.6)', // Orange
+                            borderColor: 'rgba(249, 115, 22, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Binomial Theory (Expected)',
+                            data: theoryData,
+                            type: 'line', // 'line' type for theory
+                            borderColor: '#34D399', // Green
+                            backgroundColor: 'transparent',
+                            borderWidth: 3,
+                            pointRadius: 2,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    animation: { duration: 500 },
+                    scales: {
+                        y: { 
+                            ticks: { color: '#9CA3AF' }, 
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            title: { display: true, text: 'Number of Trajectories', color: '#E5E7EB' }
+                        },
+                        x: { 
+                            ticks: { color: '#9CA3AF' }, 
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            title: { display: true, text: 'Final Score', color: '#E5E7EB' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#E5E7EB' } }
+                    }
+                }
+            });
+        }
+
+        // --- Main Simulation Function ---
+
+        function runSimulation() {
+            try {
+                // 1. Get Input
+                const n = parseInt(nWeeksEl.value);
+                const m = parseInt(mAttackersEl.value);
+                const p = parseFloat(pBreachEl.value);
+                const numTraj = parseInt(numTrajectoriesEl.value);
+
+                if (isNaN(n) || isNaN(m) || isNaN(p) || isNaN(numTraj) || n <= 0 || m < 0 || p < 0 || p > 1 || numTraj <= 0) {
+                    analysisResultEl.textContent = "Error: Please enter valid values. (n > 0, m >= 0, 0 <= p <= 1, trajectories > 0)";
+                    return;
+                }
+
+                // 2. Calculate Probabilities
+                // Prob. a single attacker fails
+                const probFailSingle = 1.0 - p;
+                // Prob. ALL m attackers fail (server secure)
+                const probSecure = Math.pow(probFailSingle, m);
+                // Prob. AT LEAST ONE succeeds (server breached)
+                const probBreach = 1.0 - probSecure;
+
+                // 3. Run Simulations
+                const allTrajectories = []; // For the line chart (only first 5)
+                const finalScores = {};   // For the histogram (all)
+
+                for (let i = 0; i < numTraj; i++) {
+                    let currentTrajectory = [0]; // Score at the start (week 0)
+                    let currentScore = 0;
+
+                    for (let week = 0; week < n; week++) {
+                        // Stochastic event for the week
+                        if (Math.random() < probBreach) {
+                            currentScore -= 1; // Breached
+                        } else {
+                            currentScore += 1; // Secure
+                        }
+                        currentTrajectory.push(currentScore);
+                    }
+
+                    // Save results of this trajectory
+                    const finalScore = currentScore;
+                    finalScores[finalScore] = (finalScores[finalScore] || 0) + 1;
+
+                    if (i < 5) { // Save only the first 5 for the chart
+                        allTrajectories.push(currentTrajectory);
+                    }
+                }
+                
+                // 4. Update UI and Charts
+                analysisResultEl.textContent = `--- Probabilistic Analysis ---\n` +
+                                               `With m=${m} attackers and p=${p}:\n` +
+                                               `  P(Server Secure) = (1 - p)^m = (1 - ${p})^${m} = ${probSecure.toFixed(6)}\n` +
+                                               `  P(Server Breached) = 1 - P(Secure) = ${probBreach.toFixed(6)}\n\n` +
+                                               `--- Random Walk (Binomial) Analysis ---\n` +
+                                               `This is a 1D Random Walk of ${n} steps.\n` +
+                                               `Let 'k' be the number of secure weeks (+1) and 'n-k' the number of breached weeks (-1).\n` +
+                                               `The final score is S = k - (n-k) = 2k - n.\n` +
+                                               `The probability of 'k' successes follows the Binomial: P(k) = C(n, k) * P(Secure)^k * P(Breached)^(n-k)`;
+
+                updateTrajectoryChart(allTrajectories, n);
+                updateDistributionChart(finalScores, n, numTraj, probSecure);
+
+            } catch (err) {
+                analysisResultEl.textContent = `Error during simulation: ${err.message}`;
+            }
+        }
+
+        // --- Event Listener ---
+        runBtn.addEventListener('click', runSimulation);
+        
+        // Run simulation on page load
+        runSimulation();
+    });
+</script>
+
+</body>
+</html>
