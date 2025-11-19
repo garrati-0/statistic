@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    
+    <title>Hmwk 10: Simulating the Poisson Process - Statistics Blog</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        body {
+            font-family: 'Roboto Mono', monospace;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            animation: fadeIn 1s ease-in-out;
+            background-color: #121212;
+            color: #E5E7EB;
+        }
+        
+        /* Grid and noise style from template */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            background: url('data:image/svg+xml,%3Csvg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%" height="100%" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            opacity: 0.1;
+            z-index: 9999;
+        }
+        .tech-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(128, 128, 128, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(128, 128, 128, 0.1) 1px, transparent 1px);
+        }
+        .text-glow-accent {
+            text-shadow: 0 0 8px #F97316, 0 0 2px #F97316;
+        }
+        .animated-element {
+             animation: slideInUp 0.8s ease-out forwards;
+             opacity: 0;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        'background-dark': "#121212",
+                        accent: '#F97316',
+                    },
+                    fontFamily: {
+                        display: ["Roboto Mono", "monospace"],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-background-dark text-gray-200">
+
+<div class="w-full min-h-screen px-4 sm:px-8 py-16 sm:py-24 bg-background-dark tech-grid">
+    <div class="max-w-6xl mx-auto flex flex-col">
+        
+        <header class="mb-12 animated-element">
+             <a href="../../index.html" class="inline-flex items-center text-accent hover:underline mb-8">
+                &lt;&lt;
+                Back to Home
+            </a>
+            <p class="text-sm text-gray-400">November 17, 2025</p>
+            
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mt-2 text-gray-100 leading-tight">
+                <span class="text-accent text-glow-accent">#10</span> 
+                Simulating the Poisson Process (The "Law of Small Numbers")
+            </h1>
+        </header>
+
+        <article class="prose prose-invert max-w-none text-gray-300 md:prose-lg">
+            
+            <p class="animated-element" style="animation-delay: 0.2s;">This homework simulates a counting process. We are given a time interval $T=1$ and an average event rate $\lambda$. The events are "independent and uniform in time." This is the definition of a <strong>Poisson Process</strong>.</p>
+            
+            <p class="animated-element" style="animation-delay: 0.4s;">We are asked to *approximate* this continuous-time process using a discrete-time model. We do this by dividing the interval $T=1$ into $n$ tiny subintervals. The probability of an event in any one of these subintervals is set to $p = \lambda / n$.</p>
+            
+            <h3 class="animated-element" style="animation-delay: 0.5s;">1. The Simulation: A Binomial Process</h3>
+            <p class="animated-element" style="animation-delay: 0.6s;">
+                What we have constructed is a sequence of $n$ independent <strong>Bernoulli trials</strong> (each subinterval is a trial: "event occurs" or "event does not occur"). The total number of events $K$ in the interval $T=1$ is the sum of these $n$ trials.
+            </p>
+            <p class="animated-element" style="animation-delay: 0.7s;">
+                This means our simulation *directly* models the <strong>Binomial Distribution</strong>:
+                $$ K \sim B(n, p) \quad \text{where } p = \lambda / n $$
+            </p>
+
+            <h3 class="animated-element" style="animation-delay: 0.8s;">2. The Target: The Poisson Process</h3>
+            <p class="animated-element" style="animation-delay: 0.9s;">
+                This simulation is a classic demonstration of the "Law of Small Numbers" (or Poisson limit theorem). This theorem states that as $n \to \infty$ and $p \to 0$ in such a way that the mean $\lambda = np$ remains constant, the Binomial distribution $B(n, p)$ converges to the <strong>Poisson distribution</strong> with parameter $\lambda$.
+                $$ \lim_{n \to \infty} B(n, \lambda/n) = \text{Poisson}(\lambda) $$
+            </p>
+            <p class="animated-element" style="animation-delay: 1.0s;">
+                The resulting distribution for the number of events $K$ in the interval is given by the Poisson probability mass function (PMF):
+                $$ P(K=k) = \frac{e^{-\lambda} \lambda^k}{k!} $$
+            </p>
+
+            <h3 class="animated-element" style="animation-delay: 1.1s;">3. Interpretation of $\lambda$ and Properties</h3>
+            <ul>
+                <li class="animated-element" style="animation-delay: 1.2s;">
+                    <strong>Interpretation of $\lambda$:</strong> The parameter $\lambda$ is the <strong>rate parameter</strong>. Since $T=1$, $\lambda$ represents the *average* or *expected* number of events in the interval. If we ran the simulation many times, the average of all the final event counts would be very close to $\lambda$. That is, $E[K] = \lambda$.
+                </li>
+                <li class="animated-element" style="animation-delay: 1.3s;">
+                    <strong>Theoretical Properties:</strong> The Poisson process has two key properties:
+                    <ol>
+                        <li><strong>Independent Increments:</strong> The number of events in one time interval is independent of the number of events in any *non-overlapping* interval.</li>
+                        <li><strong>Memorylessness:</strong> The probability of an event occurring in the next instant does not depend on how long we have been waiting. (This implies the time *between* events, or inter-arrival time, follows an Exponential distribution).</li>
+                    </ol>
+                </li>
+            </ul>
+        </article>
+        
+        <!-- Simulation Section -->
+        <div id="simulation-section" class="not-prose mt-16 p-4 sm:p-6 rounded-lg border border-gray-700 bg-gray-900/50 animated-element" style="animation-delay: 1.4s;">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-100 mb-6">Poisson Process Simulation</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div>
+                    <label for="lambda" class="block text-sm font-medium text-gray-400">1. Avg Rate ($\lambda$):</label>
+                    <input type="number" id="lambda" value="5" step="0.5" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-accent focus:border-accent text-gray-200">
+                </div>
+                <div>
+                    <label for="nIntervals" class="block text-sm font-medium text-gray-400">2. Subintervals (n):</label>
+                    <input type="number" id="nIntervals" value="5000" step="100" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-accent focus:border-accent text-gray-200">
+                </div>
+                <div>
+                    <label for="numTrajectories" class="block text-sm font-medium text-gray-400">3. Trajectories:</label>
+                    <input type="number" id="numTrajectories" value="10000" step="1000" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-accent focus:border-accent text-gray-200">
+                </div>
+                 <div>
+                    <label for="timeT" class="block text-sm font-medium text-gray-400">4. Time (T):</label>
+                    <input type="number" id="timeT" value="1" disabled class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm text-gray-400 cursor-not-allowed">
+                </div>
+            </div>
+            
+            <div>
+                <button id="runSimulationBtn" class="bg-accent hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-md transition duration-300 w-full text-lg">Run Simulation</button>
+            </div>
+            
+            <hr class="border-gray-700 my-6"/>
+
+            <!-- Analysis and Results Section -->
+            <div>
+                <h3 class="text-lg sm:text-xl font-bold text-gray-300">Statistical Analysis</h3>
+                <div id="analysisResult" class="mt-3 p-4 bg-gray-800 border-gray-600 rounded-md text-gray-300 text-sm min-h-[100px] whitespace-pre-wrap">Analysis will appear here...</div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+                <!-- Trajectory Chart -->
+                <div>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-300 mb-4">Single Realization of Counting Process</h3>
+                    <div class="mt-2 p-2 sm:p-3 bg-gray-800 rounded-md">
+                        <canvas id="processChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Distribution Chart -->
+                <div>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-300 mb-4">Distribution of Total Events (K) vs. Poisson</h3>
+                     <div class="mt-2 p-2 sm:p-3 bg-gray-800 rounded-md">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer class="max-w-4xl mx-auto w-full text-sm mt-16 text-center text-gray-500 px-4">
+        <p>&copy; 2025 Statistics Blog. All rights reserved.</p>
+        <p class="mt-2">Created by Enrico Garrapa - Matricola: 2222774</p>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DOM Elements ---
+        const lambdaEl = document.getElementById('lambda');
+        const nIntervalsEl = document.getElementById('nIntervals');
+        const numTrajectoriesEl = document.getElementById('numTrajectories');
+        const runBtn = document.getElementById('runSimulationBtn');
+        const analysisResultEl = document.getElementById('analysisResult');
+        
+        const processCanvas = document.getElementById('processChart');
+        const distributionCanvas = document.getElementById('distributionChart');
+        
+        let processChart = null;
+        let distributionChart = null;
+
+        // --- Math Functions ---
+
+        /**
+         * Calculates factorial (k!)
+         */
+        let factorial_cache = [];
+        function factorial(k) {
+            if (k < 0) return NaN;
+            if (k === 0) return 1;
+            if (factorial_cache[k]) return factorial_cache[k];
+            
+            let res = 1;
+            for (let i = 2; i <= k; i++) {
+                res = res * i;
+            }
+            factorial_cache[k] = res;
+            return res;
+        }
+
+        /**
+         * Calculates the Poisson PMF: P(K=k)
+         */
+        function poissonPMF(lambda, k) {
+            if (lambda < 0 || k < 0 || !Number.isInteger(k)) return 0;
+            // Use log-space for numerical stability with large k
+            let log_pmf = -lambda + k * Math.log(lambda) - (k > 1 ? (Math.log(2*Math.PI*k)/2 + k*(Math.log(k)-1)) : 0);
+            
+            // Simpler calculation for smaller k (less stable but OK)
+            // Note: factorial(k) can become Infinity quickly
+            let factK = factorial(k);
+            if (factK === Infinity) {
+                // Fallback to Stirling approximation for log(k!)
+                // This is a bit complex, let's use a simpler (but less robust) direct calc
+                // and rely on JS handling large numbers.
+                try {
+                     return (Math.exp(-lambda) * Math.pow(lambda, k)) / factorial(k);
+                } catch (e) {
+                    return 0; // Will be 0 if k is too large anyway
+                }
+            }
+             return (Math.exp(-lambda) * Math.pow(lambda, k)) / factK;
+        }
+
+        // --- Chart Update Functions ---
+
+        function updateProcessChart(processData, n) {
+            // Create labels for each subinterval step
+            const labels = Array.from({ length: n + 1 }, (_, i) => i);
+            
+            const datasets = [{
+                label: `Cumulative Events (First Trajectory)`,
+                data: processData,
+                borderColor: '#F97316',
+                backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                borderWidth: 2,
+                pointRadius: 0,
+                tension: 0,
+                stepped: true // This is the key! Makes it a step function
+            }];
+
+            if (processChart) {
+                processChart.destroy();
+            }
+            
+            processChart = new Chart(processCanvas, {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    animation: { duration: 0 }, // Disable animation for large data
+                    scales: {
+                        y: { 
+                            ticks: { color: '#9CA3AF', stepSize: 1 }, // Integer steps
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            title: { display: true, text: 'Cumulative Events (K)', color: '#E5E7EB' }
+                        },
+                        x: { 
+                            ticks: { color: '#9CA3AF', maxTicksLimit: 10 }, // Limit ticks
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            title: { display: true, text: 'Subinterval (Time Step)', color: '#E5E7EB' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#E5E7EB' } }
+                    }
+                }
+            });
+        }
+
+        function updateDistributionChart(finalCounts, numTrajectories, lambda) {
+            const maxK = Math.max(...Object.keys(finalCounts).map(Number));
+            
+            const labels = [];
+            const simData = [];
+            const theoryData = [];
+
+            // Build the aligned data arrays
+            for (let k = 0; k <= maxK; k++) {
+                labels.push(k.toString()); // Label for the final count 'k'
+                
+                // Simulated data
+                simData.push(finalCounts[k] || 0);
+
+                // Theoretical data (Poisson)
+                const expectedProb = poissonPMF(lambda, k);
+                const expectedCount = expectedProb * numTrajectories;
+                theoryData.push(expectedCount);
+            }
+
+            if (distributionChart) {
+                distributionChart.destroy();
+            }
+
+            distributionChart = new Chart(distributionCanvas, {
+                type: 'bar', // 'bar' type for simulation
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Simulation (Counts)',
+                            data: simData,
+                            backgroundColor: 'rgba(249, 115, 22, 0.6)', // Orange
+                            borderColor: 'rgba(249, 115, 22, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Poisson Theory (Expected)',
+                            data: theoryData,
+                            type: 'line', // 'line' type for theory
+                            borderColor: '#34D399', // Green
+                            backgroundColor: 'transparent',
+                            borderWidth: 3,
+                            pointRadius: 2,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    animation: { duration: 500 },
+                    scales: {
+                        y: { 
+                            ticks: { color: '#9CA3AF' }, 
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            title: { display: true, text: 'Number of Trajectories', color: '#E5E7EB' }
+                        },
+                        x: { 
+                            ticks: { color: '#9CA3AF' }, 
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            title: { display: true, text: 'Total Events (K)', color: '#E5E7EB' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#E5E7EB' } }
+                    }
+                }
+            });
+        }
+
+        // --- Main Simulation Function ---
+
+        function runSimulation() {
+            try {
+                // 1. Get Input
+                const lambda = parseFloat(lambdaEl.value);
+                const n = parseInt(nIntervalsEl.value);
+                const numTraj = parseInt(numTrajectoriesEl.value);
+                const T = 1; // Fixed T=1
+
+                if (isNaN(lambda) || isNaN(n) || isNaN(numTraj) || n <= 0 || lambda < 0 || numTraj <= 0) {
+                    analysisResultEl.textContent = "Error: Please enter valid values. (n > 0, lambda >= 0, trajectories > 0)";
+                    return;
+                }
+                
+                // 2. Calculate Probability for the Binomial Approximation
+                // The rate for the *entire* interval is lambda * T
+                const lambdaT = lambda * T;
+                // The probability of success in *one* subinterval
+                const p = lambdaT / n;
+
+                if (p > 1) {
+                     analysisResultEl.textContent = `Error: n is too small for this lambda. 
+The probability p = lambda*T / n = ${p.toFixed(4)} cannot be > 1. 
+Please increase n or decrease lambda.`;
+                    return;
+                }
+                
+                // 3. Run Simulations
+                const firstTrajectoryData = [0]; // Store steps for the process chart
+                const finalCounts = {};          // Store final counts for the histogram
+
+                for (let i = 0; i < numTraj; i++) {
+                    let cumulativeCount = 0;
+                    
+                    // Run one trajectory (n subintervals)
+                    for (let j = 0; j < n; j++) {
+                        // Bernoulli trial
+                        if (Math.random() < p) {
+                            cumulativeCount++;
+                        }
+                        
+                        // If this is the first trajectory, store its path
+                        if (i === 0) {
+                            firstTrajectoryData.push(cumulativeCount);
+                        }
+                    }
+
+                    // Store the final count of this trajectory
+                    const finalCount = cumulativeCount;
+                    finalCounts[finalCount] = (finalCounts[finalCount] || 0) + 1;
+                }
+                
+                // 4. Update UI and Charts
+                const simMean = Object.entries(finalCounts).reduce((acc, [count, num]) => acc + (count * num), 0) / numTraj;
+
+                analysisResultEl.textContent = `--- Binomial Approximation ---\n` +
+                                               `Simulating B(n, p) with parameters:\n` +
+                                               `  n (Subintervals) = ${n}\n` +
+                                               `  p (Prob. / interval) = (lambda * T) / n = ${p.toFixed(8)}\n\n` +
+                                               `--- Poisson Process Approximation ---\n` +
+                                               `This converges to Poisson(lambda*T) with:\n` +
+                                               `  Rate (lambda*T) = ${lambdaT.toFixed(4)}\n` +
+                                               `  Theoretical Mean: E[K] = ${lambdaT.toFixed(4)}\n` +
+                                               `  Simulated Mean: E[K] ≈ ${simMean.toFixed(4)}\n` +
+                                               `  Theoretical PMF: P(K=k) = e^(-${lambdaT.toFixed(2)}) * ${lambdaT.toFixed(2)}^k / k!`;
+
+                updateProcessChart(firstTrajectoryData, n);
+                updateDistributionChart(finalCounts, numTraj, lambdaT);
+
+            } catch (err) {
+                analysisResultEl.textContent = `Error during simulation: ${err.message}`;
+            }
+        }
+
+        // --- Event Listener ---
+        runBtn.addEventListener('click', runSimulation);
+        
+        // Run simulation on page load
+        runSimulation();
+    });
+</script>
+
+</body>
+</html>

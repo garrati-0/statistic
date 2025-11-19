@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    
+    <title>Hmwk 9: Axioms, Interpretations, and Measure Theory - Statistics Blog</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif; /* Using Roboto for readability */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            animation: fadeIn 1s ease-in-out;
+            background-color: #121212;
+            color: #E5E7EB;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            background: url('data:image/svg+xml,%3Csvg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%" height="100%" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            opacity: 0.1;
+            z-index: 9999;
+        }
+
+        .tech-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(128, 128, 128, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(128, 128, 128, 0.1) 1px, transparent 1px);
+        }
+        .text-glow-accent {
+            text-shadow: 0 0 8px #F97316, 0 0 2px #F97316;
+        }
+        .animated-element {
+             animation: slideInUp 0.8s ease-out forwards;
+             opacity: 0;
+        }
+        
+        /* Using Roboto Mono specifically for code/math elements */
+        .prose code, .axiom-box, .derivation-box {
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        /* Box for Axioms */
+        .axiom-box {
+            background-color: #1f2937;
+            border-left: 4px solid #F97316;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            color: #d1d5db;
+        }
+        
+        /* Box for Derivations */
+        .derivation-box {
+            background-color: #18181b; /* A slightly darker bg */
+            border: 1px solid #374151;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            color: #d1d5db;
+        }
+        .derivation-box h3 {
+            color: #F97316;
+            margin-top: 0;
+        }
+
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        'background-dark': "#121212",
+                        accent: '#F97316',
+                    },
+                    fontFamily: {
+                        display: ["Roboto", "sans-serif"],
+                        mono: ["Roboto Mono", "monospace"],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-background-dark text-gray-200">
+
+<div class="w-full min-h-screen px-4 sm:px-8 py-16 sm:py-24 bg-background-dark tech-grid">
+    <div class="max-w-4xl mx-auto flex flex-col">
+        
+        <header class="mb-12 animated-element">
+            <a href="../../index.html" class="inline-flex items-center text-accent hover:underline mb-8">
+                &lt;&lt;
+                Back to Home
+            </a>
+            <p class="text-sm text-gray-400">November 17, 2025</p>
+            
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mt-2 text-gray-100 leading-tight">
+                <span class="text-accent text-glow-accent">#9</span> 
+                
+            </h1>
+        </header>
+
+        <article class="prose prose-invert max-w-none text-gray-300 md:prose-lg">
+            
+            <p class="animated-element" style="animation-delay: 0.2s;">What *is* probability? This question is surprisingly deep. Is it a property of the physical world, or a measure of our personal beliefs? For centuries, different "interpretations" of probability coexisted, each with conceptual problems. This homework reviews these interpretations and shows how the modern axiomatic approach, built on measure theory, creates a unified foundation that sidesteps these philosophical conflicts.</p>
+            
+            <h2 class="animated-element" style="animation-delay: 0.4s;">Part 1: The Main Interpretations of Probability</h2>
+            
+            <h3 class="animated-element" style="animation-delay: 0.5s;">1. The Classical Interpretation (Laplace)</h3>
+            <p class="animated-element" style="animation-delay: 0.6s;">
+                <strong>Core Idea:</strong> Assumes a finite number of *equally likely* outcomes. The probability of an event is the ratio of favorable outcomes to the total number of outcomes.
+                $$ P(A) = \frac{\text{Number of Favorable Outcomes}}{\text{Total Number of Outcomes}} $$
+                <strong>Example:</strong> A fair six-sided die. $P(\text{Roll a 4}) = 1/6$.
+                <br>
+                <strong>Inconsistency:</strong> It's circular. What does "equally likely" mean, if not "equally probable"? It also completely fails for infinite sample spaces (like picking a random number from 0 to 1) or when outcomes are not equally likely (a biased coin).
+            </p>
+
+            <h3 class="animated-element" style="animation-delay: 0.7s;">2. The Frequentist Interpretation (von Mises, Reichenbach)</h3>
+            <p class="animated-element" style="animation-delay: 0.8s;">
+                <strong>Core Idea:</strong> Probability is the long-run relative frequency of an event over many repeated trials.
+                $$ P(A) = \lim_{n \to \infty} \frac{\text{Number of times } A \text{ occurred in } n \text{ trials}}{n} $$
+                <strong>Example:</strong> To find $P(\text{Heads})$ for a bent coin, flip it 10,000 times. If you get 5,500 heads, you estimate $P(\text{Heads}) \approx 0.55$.
+                <br>
+                <strong>Inconsistency:</strong> It cannot assign probabilities to one-time events. What is the "long-run frequency" of the 2028 presidential election, or the probability that a specific medical diagnosis is correct? These events are not repeatable in the same way. The "limit" is a physical assumption, not a mathematical one.
+            </p>
+
+            <h3 class="animated-element" style="animation-delay: 0.9s;">3. The Bayesian (Subjective) Interpretation (de Finetti, Savage)</h3>
+            <p class="animated-element" style="animation-delay: 1.0s;">
+                <strong>Core Idea:</strong> Probability is a "degree of belief" or a quantification of personal confidence in a proposition. It is a state of knowledge, not a state of the world.
+                <br>
+                <strong>Example:</strong> A doctor says, "There is an 80% probability you have the flu." This is a statement of their belief based on your symptoms (the evidence). Bayes' Theorem is the engine for updating this belief as new evidence arrives.
+                <br>
+                <strong>Inconsistency:</strong> It can feel "unscientific" because it relies on a *prior* belief, which can be different for different people. This subjectivity was (and is) a major point of contention for frequentists.
+            </p>
+            
+            <h3 class="animated-element" style="animation-delay: 1.1s;">4. The Geometric Interpretation</h3>
+            <p class="animated-element" style="animation-delay: 1.2s;">
+                <strong>Core Idea:</strong> An extension of the classical view to continuous, uncountably infinite spaces. Probability is the ratio of measures (length, area, volume).
+                $$ P(A) = \frac{\text{Measure of Favorable Region } A}{\text{Measure of Total Space } \Omega} $$
+                <strong>Example:</strong> "The probability of a random number $x \in [0, 10]$ being less than 2." The measure is length. $P(x < 2) = \text{length}([0, 2]) / \text{length}([0, 10]) = 2 / 10 = 0.2$.
+                <br>
+                <strong>Inconsistency:</strong> This relies on a "principle of indifference" (assuming a uniform distribution) and breaks down when sets are "unmeasurable" (e.g., Banach-Tarski paradox).
+            </p>
+
+            <h2 class="animated-element" style="animation-delay: 1.3s;">Part 2: Resolution via the Axiomatic Approach</h2>
+            <p class="animated-element" style="animation-delay: 1.4s;">
+                In 1933, Andrey Kolmogorov cut through these philosophical arguments. He proposed an approach that *doesn't care* which interpretation you use. It simply states that for any system to be a valid "probability," it must follow three simple rules (axioms).
+            </p>
+            <p class="animated-element" style="animation-delay: 1.5s;">
+                This axiomatic approach separated the *mathematics* of probability from the *philosophy* of probability. It provides a rigorous foundation that all interpretations can share. A frequentist and a Bayesian may disagree on *how* they arrived at $P(A) = 0.5$, but they both agree that $P(A^c)$ must also be $0.5$, because their number $P(A)$ must obey the axioms.
+            </p>
+
+            <div class="axiom-box animated-element" style="animation-delay: 1.6s;">
+                <strong>Kolmogorov's Axioms of Probability</strong><br><br>
+                Given a sample space $\Omega$ and a set of events $\mathcal{F}$ (a $\sigma$-algebra):<br><br>
+                A probability measure $P$ is a function that assigns a real number to every event $A \in \mathcal{F}$ such that:
+                <br><br>
+                <strong>1. Non-negativity:</strong><br>
+                $P(A) \ge 0$, for any event $A$.
+                <br><br>
+                <strong>2. Normalization:</strong><br>
+                $P(\Omega) = 1$, where $\Omega$ is the entire sample space. (The probability that *something* happens is 1).
+                <br><br>
+                <strong>3. Countable Additivity:</strong><br>
+                For any countable sequence of *disjoint* (mutually exclusive) events $A_1, A_2, A_3, \dots$ (i.e., $A_i \cap A_j = \emptyset$ for $i \ne j$):
+                $$ P(A_1 \cup A_2 \cup A_3 \cup \dots) = \sum_{i=1}^\infty P(A_i) $$
+            </div>
+
+            <h2 class="animated-element" style="animation-delay: 1.7s;">Part 3: The Relationship with Measure Theory</h2>
+            <p class="animated-element" style="animation-delay: 1.8s;">
+                Kolmogorov's axioms are a direct application of <strong>Measure Theory</strong>. This is the mathematical language for rigorously defining concepts like "length," "area," and "volume." The connection is profound:
+            </p>
+            <ul>
+                <li class="animated-element" style="animation-delay: 1.9s;">
+                    <strong>Sample Space ($\Omega$) and $\sigma$-algebra ($\mathcal{F}$):</strong>
+                    This pair $(\Omega, \mathcal{F})$ is called a <strong>measurable space</strong>. The $\sigma$-algebra (or sigma-field) $\mathcal{F}$ is the collection of all "valid" events we can assign a probability to. It's a set of subsets of $\Omega$ that is closed under complement and countable unions, which prevents paradoxes with unmeasurable sets.
+                </li>
+                <li class="animated-element" style="animation-delay: 2.0s;">
+                    <strong>Probability Measure ($P$):</strong>
+                    A <strong>probability measure</strong> is simply a <strong>measure</strong> (like area or volume) that has been normalized so that the measure of the total space is 1 (Axiom 2). The triplet $(\Omega, \mathcal{F}, P)$ is called a <strong>probability space</strong>.
+                </li>
+                <li class="animated-element" style="animation-delay: 2.1s;">
+                    <strong>Random Variable ($X$):</strong>
+                    In measure theory, a <strong>random variable</strong> is formally defined as a <strong>measurable function</strong> $X: \Omega \to \mathbb{R}$. This means it's a function that maps outcomes in the sample space (like "heads") to real numbers (like "1"), and it does so in a way that allows us to ask questions. The "measurable" part guarantees that for any $x$, the set of outcomes $\{\omega \in \Omega \mid X(\omega) \le x\}$ is a valid event in our $\sigma$-algebra $\mathcal{F}$, so we can find its probability.
+                </li>
+            </ul>
+
+            <h2 class="animated-element" style="animation-delay: 2.2s;">Part 4: Derivations from the Axioms</h2>
+            <p class="animated-element" style="animation-delay: 2.3s;">
+                Using *only* the three axioms, we can derive all other rules of probability.
+            </p>
+
+            <div class="derivation-box animated-element" style="animation-delay: 2.4s;">
+                <h3>Derivation: Probability of the Complement $P(A^c) = 1 - P(A)$</h3>
+                <ol>
+                    <li>The sample space $\Omega$ can be split into two disjoint sets: $A$ and its complement $A^c$. So, $\Omega = A \cup A^c$, where $A \cap A^c = \emptyset$.</li>
+                    <li>By <strong>Axiom 3</strong> (Additivity), we can write: $P(\Omega) = P(A) + P(A^c)$.</li>
+                    <li>By <strong>Axiom 2</strong> (Normalization), we know $P(\Omega) = 1$.</li>
+                    <li>Substituting (3) into (2): $1 = P(A) + P(A^c)$.</li>
+                    <li>Rearranging gives the property: $P(A^c) = 1 - P(A)$.</li>
+                </ol>
+            </div>
+
+            <div class="derivation-box animated-element" style="animation-delay: 2.5s;">
+                <h3>Derivation: Subadditivity (Boole's Inequality) $P(A \cup B) \le P(A) + P(B)$</h3>
+                <ol>
+                    <li>We can express the union $A \cup B$ as the union of two disjoint sets: $A \cup B = A \cup (B \setminus A)$. (Here $B \setminus A$ means "B but not A").</li>
+                    <li>By <strong>Axiom 3</strong> (Additivity): $P(A \cup B) = P(A) + P(B \setminus A)$.</li>
+                    <li>Now consider the event $B$. We can split it into two disjoint sets: $B = (B \setminus A) \cup (A \cap B)$.</li>
+                    <li>By <strong>Axiom 3</strong> (Additivity): $P(B) = P(B \setminus A) + P(A \cap B)$.</li>
+                    <li>By <strong>Axiom 1</strong> (Non-negativity), we know $P(A \cap B) \ge 0$.</li>
+                    <li>Therefore, from (4), $P(B) \ge P(B \setminus A)$.</li>
+                    <li>Substitute this inequality (6) back into our equation from (2):</li>
+                    <li>$P(A \cup B) = P(A) + P(B \setminus A) \le P(A) + P(B)$.</li>
+                </ol>
+            </div>
+            
+            <div class="derivation-box animated-element" style="animation-delay: 2.6s;">
+                <h3>Derivation: Inclusion-Exclusion Principle $P(A \cup B) = P(A) + P(B) - P(A \cap B)$</h3>
+                <ol>
+                    <li>We start from step 4 of the subadditivity proof: $P(B) = P(B \setminus A) + P(A \cap B)$.</li>
+                    <li>Rearranging this, we get an expression for $P(B \setminus A)$:<br> $P(B \setminus A) = P(B) - P(A \cap B)$.</li>
+                    <li>Now we use the other disjoint decomposition from step 1 of the subadditivity proof: $A \cup B = A \cup (B \setminus A)$.</li>
+                    <li>By <strong>Axiom 3</strong> (Additivity): $P(A \cup B) = P(A) + P(B \setminus A)$.</li>
+                    <li>Substitute the expression from (2) into (4):</li>
+                    <li>$P(A \cup B) = P(A) + (P(B) - P(A \cap B))$.</li>
+                    <li>This simplifies to the principle: $P(A \cup B) = P(A) + P(B) - P(A \cap B)$.</li>
+                </ol>
+            </div>
+
+        </article>
+        
+    </div>
+
+    <footer class="max-w-4xl mx-auto w-full text-sm mt-16 text-center text-gray-500 px-4">
+        <p>&copy; 2025 Statistics Blog. All rights reserved.</p>
+        <p class="mt-2">Created by Enrico Garrapa - Matricola: 2222774</p>
+    </footer>
+</div>
+<!-- This page is theoretical, so no simulation <script> is needed. -->
+</body>
+</html>
