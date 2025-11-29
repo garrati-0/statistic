@@ -54,12 +54,7 @@
             scroll-behavior: smooth;
         }
         
-        /* Utility classes for animations and effects */
-        .post-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out;
-        }
+        /* Utility classes */
         .blinking-cursor {
             animation: blink 1s step-end infinite;
             font-weight: 700;
@@ -84,16 +79,25 @@
         .bouncing-element {
             animation: bounce 2s infinite ease-in-out;
         }
+
+        /* Card Hover Effects */
+        .post-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border-color: #F97316;
+        }
     </style>
     <script>
-        // Simplified Tailwind config for dark mode only
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     colors: {
                         'background-dark': "#121212",
-                        accent: '#F97316', // Orange accent color
+                        accent: '#F97316',
                     },
                     fontFamily: {
                         display: ["Roboto Mono", "monospace"],
@@ -105,10 +109,10 @@
 </head>
 <body class="bg-background-dark text-gray-200">
 
-<!-- Simplified Hero Section -->
-<div class="relative min-h-screen w-full overflow-hidden tech-grid flex flex-col p-4">
+<!-- Hero Section -->
+<div class="relative min-h-[90vh] w-full overflow-hidden tech-grid flex flex-col p-4 border-b border-gray-800">
     <!-- Header Info -->
-    <header class="w-full max-w-6xl mx-auto flex justify-between items-start text-xs uppercase p-4 flex-wrap gap-4">
+    <header class="w-full max-w-7xl mx-auto flex justify-between items-start text-xs uppercase p-4 flex-wrap gap-4">
         <div class="animated-text" style="animation-delay: 0.2s;">
             <p>Sapienza University</p>
             <p class="text-accent">_Statistics Project</p>
@@ -125,7 +129,6 @@
 
     <!-- Centered Content -->
     <div class="flex-grow flex flex-col items-center justify-center relative">
-        <!-- Main Title Area -->
         <div class="w-full flex justify-center md:justify-start md:pl-12 lg:pl-24">
             <div class="text-center md:text-left">
                 <p class="text-2xl md:text-3xl text-accent font-bold tracking-wider animated-text" style="animation-delay: 1.0s;">BLOG</p>
@@ -135,27 +138,17 @@
             </div>
         </div>
         
-        <!-- Index Section -->
-        <div class="mt-12 animated-text" style="animation-delay: 1.2s;">
-            <p class="text-sm uppercase tracking-widest text-accent text-center">Indice</p>
-            <ul id="posts-index" class="mt-2 space-y-1 text-xs uppercase text-center">
+        <!-- Quick Index -->
+        <div class="mt-12 animated-text w-full max-w-4xl px-4" style="animation-delay: 1.2s;">
+            <p class="text-sm uppercase tracking-widest text-accent text-center mb-4">System Index</p>
+            <ul id="posts-index" class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs uppercase text-center text-gray-500">
                 <!-- Populated by JS -->
             </ul>
         </div>
     </div>
 
-    <!-- Est. Year -->
-    <div class="absolute top-1/2 right-4 -translate-y-1/2 text-xs uppercase hidden sm:block" style="writing-mode: vertical-rl; transform: rotate(180deg) translateY(50%);">
-        <p>Est. 2025</p>
-    </div>
-    
-    <!-- Author Info -->
-    <div class="w-full text-right pb-4 animated-text" style="animation-delay: 1.6s; z-index: 10;">
-        <p class="text-accent text-glow-accent">enrico garrapa // 2222774</p>
-    </div>
-
-    <!-- Scroll Down Indicator -->
-    <a href="#posts" class="w-full flex justify-center pb-8 animated-text" style="animation-delay: 1.8s; z-index: 10;">
+    <!-- Scroll Down -->
+    <a href="#posts" class="w-full flex justify-center pb-8 animated-text absolute bottom-0" style="animation-delay: 1.8s; z-index: 10;">
         <div class="bouncing-element flex flex-col items-center text-xs uppercase tracking-widest text-gray-200">
             <span>Scroll</span>
             <span class="material-icons text-lg">keyboard_arrow_down</span>
@@ -163,207 +156,229 @@
     </a>
 </div>
 
-<!-- Blog Content -->
-<div id="posts" class="w-full px-4 sm:px-8 py-16 sm:py-24 bg-background-dark tech-grid">
-    <div class="max-w-3xl mx-auto flex flex-col">
+<!-- Blog Content Grid -->
+<div id="posts" class="w-full px-4 sm:px-8 py-16 bg-background-dark min-h-screen">
+    <div class="max-w-7xl mx-auto">
         
-        <!-- Post Card 1 -->
-        <div id="post-1" class="post-card border-x border-b border-gray-200/20">
-            <div class="post-header p-4 sm:p-6 cursor-pointer flex justify-between items-center border-t-4 border-accent">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-bold"><span class="text-accent mr-2">#1</span>HOMEWORK</h2>
-                <span class="material-icons expand-icon text-3xl transition-transform duration-300">add</span>
-            </div>
-            <div class="post-content px-4 sm:px-6 pb-6">
-                 <div class="prose prose-invert max-w-none text-gray-300">
-                      <p class="text-sm text-gray-400">October 3, 2025</p>
-                      <p>What is statistics, and why can it be useful for cybersecurity?</p>
-                      <a href="homework/homework1/homework1.html" class="mt-4 inline-flex items-center text-accent">
-  Read More >>
-</a>
-                 </div>
-            </div>
-
-
-                    <div id="post-1" class="post-card border-x border-b border-gray-200/20">
-            <div class="post-header p-4 sm:p-6 cursor-pointer flex justify-between items-center border-t-4 border-accent">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-bold"><span class="text-accent mr-2">#2</span>HOMEWORK</h2>
-                <span class="material-icons expand-icon text-3xl transition-transform duration-300">add</span>
-            </div>
-            <div class="post-content px-4 sm:px-6 pb-6">
-                 <div class="prose prose-invert max-w-none text-gray-300">
-                      <p class="text-sm text-gray-400">October 10, 2025</p>
-                      <p>From Data to Ciphers: An In-Depth Guide to Datasets, Distributions, and Cryptanalysis</p>
-                      <a href="homework/homework2/homework2.html" class="mt-4 inline-flex items-center text-accent">
-  Read More >>
-</a>
-                 </div>
-            </div>
+        <div class="flex items-baseline justify-between mb-8 border-b border-gray-800 pb-2">
+            <h2 class="text-xl font-bold text-accent">/VAR/LOG/HOMEWORKS</h2>
+            <span class="text-xs text-gray-600">Total Records: 11</span>
         </div>
-             <div id="post-1" class="post-card border-x border-b border-gray-200/20">
-            <div class="post-header p-4 sm:p-6 cursor-pointer flex justify-between items-center border-t-4 border-accent">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-bold"><span class="text-accent mr-2">#3</span>HOMEWORK</h2>
-                <span class="material-icons expand-icon text-3xl transition-transform duration-300">add</span>
+
+        <!-- Grid Container -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Card 1 -->
+            <div id="post-1" class="post-card border border-gray-800 bg-gray-900/30 flex flex-col h-full group relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                
+                <div class="p-6 flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-4xl font-bold text-gray-800 group-hover:text-gray-700 transition-colors select-none">01</span>
+                        <span class="text-xs text-accent border border-accent/30 px-2 py-1 rounded bg-accent/5">INIT</span>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold text-gray-200 mb-2 group-hover:text-accent transition-colors">What is Statistics?</h3>
+                    <p class="text-xs text-gray-500 mb-4 font-mono">October 3, 2025</p>
+                    
+                    <p class="text-sm text-gray-400 mb-6 flex-grow">
+                        What is statistics, and why can it be useful for cybersecurity?
+                    </p>
+                    
+                    <a href="homework/homework1/homework1.html" class="inline-flex items-center text-sm font-bold text-accent hover:text-white transition-colors mt-auto uppercase tracking-wider">
+                        <span>Execute</span>
+                        <span class="material-icons text-sm ml-1">chevron_right</span>
+                    </a>
+                </div>
             </div>
-            <div class="post-content px-4 sm:px-6 pb-6">
-                 <div class="prose prose-invert max-w-none text-gray-300">
-                      <p class="text-sm text-gray-400">October 19, 2025</p>
-                      <p>RSA Exposed: A Statistical Look at Public-Key Encryption</p>
-                      <a href="homework/homework3/homework3.html" class="mt-4 inline-flex items-center text-accent">
-  Read More >>
-</a>
-                 </div>
+
+            <!-- Card 2 -->
+            <div id="post-2" class="post-card border border-gray-800 bg-gray-900/30 flex flex-col h-full group relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div class="p-6 flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-4xl font-bold text-gray-800 group-hover:text-gray-700 transition-colors select-none">02</span>
+                        <span class="text-xs text-accent border border-accent/30 px-2 py-1 rounded bg-accent/5">CRYPTO</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-200 mb-2 group-hover:text-accent transition-colors">Data to Ciphers</h3>
+                    <p class="text-xs text-gray-500 mb-4 font-mono">October 10, 2025</p>
+                    <p class="text-sm text-gray-400 mb-6 flex-grow">From Data to Ciphers: An In-Depth Guide to Datasets, Distributions, and Cryptanalysis.</p>
+                    <a href="homework/homework2/homework2.html" class="inline-flex items-center text-sm font-bold text-accent hover:text-white transition-colors mt-auto uppercase tracking-wider">
+                        <span>Execute</span>
+                        <span class="material-icons text-sm ml-1">chevron_right</span>
+                    </a>
+                </div>
             </div>
+
+            <!-- Card 3 -->
+            <div id="post-3" class="post-card border border-gray-800 bg-gray-900/30 flex flex-col h-full group relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div class="p-6 flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-4xl font-bold text-gray-800 group-hover:text-gray-700 transition-colors select-none">03</span>
+                        <span class="text-xs text-accent border border-accent/30 px-2 py-1 rounded bg-accent/5">RSA</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-200 mb-2 group-hover:text-accent transition-colors">RSA Exposed</h3>
+                    <p class="text-xs text-gray-500 mb-4 font-mono">October 19, 2025</p>
+                    <p class="text-sm text-gray-400 mb-6 flex-grow">RSA Exposed: A Statistical Look at Public-Key Encryption.</p>
+                    <a href="homework/homework3/homework3.html" class="inline-flex items-center text-sm font-bold text-accent hover:text-white transition-colors mt-auto uppercase tracking-wider">
+                        <span>Execute</span>
+                        <span class="material-icons text-sm ml-1">chevron_right</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div id="post-4" class="post-card border border-gray-800 bg-gray-900/30 flex flex-col h-full group relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div class="p-6 flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-4xl font-bold text-gray-800 group-hover:text-gray-700 transition-colors select-none">04</span>
+                        <span class="text-xs text-accent border border-accent/30 px-2 py-1 rounded bg-accent/5">LLN</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-200 mb-2 group-hover:text-accent transition-colors">Law of Large Numbers</h3>
+                    <p class="text-xs text-gray-500 mb-4 font-mono">October 22, 2025</p>
+                    <p class="text-sm text-gray-400 mb-6 flex-grow">Demonstrating the Law of Large Numbers through simulation.</p>
+                    <a href="homework/homework4/homework4.html" class="inline-flex items-center text-sm font-bold text-accent hover:text-white transition-colors mt-auto uppercase tracking-wider">
+                        <span>Execute</span>
+                        <span class="material-icons text-sm ml-1">chevron_right</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div id="post-5" class="post-card border border-gray-800 bg-gray-900/30 flex flex-col h-full group relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div class="p-6 flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-4xl font-bold text-gray-800 group-hover:text-gray-700 transition-colors select-none">05</span>
+                        <span class="text-xs text-accent border border-accent/30 px-2 py-1 rounded bg-accent/5">AVG</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-200 mb-2 group-hover:text-accent transition-colors">Understanding Averages</h3>
+                    <p class="text-xs text-gray-500 mb-4 font-mono">October 31, 2025</p>
+                    <p class="text-sm text-gray-400 mb-6 flex-grow">Understanding Averages: Which "Measure of Location" is Best?</p>
+                    <a href="homework/homework5/homework5.html" class="inline-flex items-center text-sm font-bold text-accent hover:text-white transition-colors mt-auto uppercase tracking-wider">
+                        <span>Execute</span>
+                        <span class="material-icons text-sm ml-1">chevron_right</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div id="post-6" class="post-card border border-gray-800 bg-gray-900/30 flex flex-col h-full group relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div class="p-6 flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-4xl font-bold text-gray-800 group-hover:text-gray-700 transition-colors select-none">06</span>
+                        <span class="text-xs text-accent border border-accent/30 px-2 py-1 rounded bg-accent/5">ALGO</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-200 mb-2 group-hover:text-accent transition-colors">Online Algorithms</h3>
+                    <p class="text-xs text-gray-500 mb-4 font-mono">November 01, 2025</p>
+                    <p class="text-sm text-gray-400 mb-6 flex-grow">Online Algorithms: Recurrence Formulas for Mean and Variance.</p>
+                    <a href="homework/homework6/homework6.html" class="inline-flex items-center text-sm font-bold text-accent hover:text-white transition-colors mt-auto uppercase tracking-wider">
+                        <span>Execute</span>
+                        <span class="material-icons text-sm ml-1">chevron_right</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 7 -->
+            <div id="post-7" class="post-card border border-gray-800 bg-gray-900/30 flex flex-col h-full group relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div class="p-6 flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-4xl font-bold text-gray-800 group-hover:text-gray-700 transition-colors select-none">07</span>
+                        <span class="text-xs text-accent border border-accent/30 px-2 py-1 rounded bg-accent/5">SIM</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-200 mb-2 group-hover:text-accent transition-colors">Security Simulation</h3>
+                    <p class="text-xs text-gray-500 mb-4 font-mono">November 10, 2025</p>
+                    <p class="text-sm text-gray-400 mb-6 flex-grow">Security Simulation, Random Walks, and Binomial Convergence.</p>
+                    <a href="homework/homework7/homework7.html" class="inline-flex items-center text-sm font-bold text-accent hover:text-white transition-colors mt-auto uppercase tracking-wider">
+                        <span>Execute</span>
+                        <span class="material-icons text-sm ml-1">chevron_right</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 8 -->
+            <div id="post-8" class="post-card border border-gray-800 bg-gray-900/30 flex flex-col h-full group relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div class="p-6 flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-4xl font-bold text-gray-800 group-hover:text-gray-700 transition-colors select-none">08</span>
+                        <span class="text-xs text-accent border border-accent/30 px-2 py-1 rounded bg-accent/5">MATH</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-200 mb-2 group-hover:text-accent transition-colors">Thread of Recurrence</h3>
+                    <p class="text-xs text-gray-500 mb-4 font-mono">November 10, 2025</p>
+                    <p class="text-sm text-gray-400 mb-6 flex-grow">The Thread of Recurrence: Connecting Statistics, Combinatorics, and Sequences.</p>
+                    <a href="homework/homework8/homework8.html" class="inline-flex items-center text-sm font-bold text-accent hover:text-white transition-colors mt-auto uppercase tracking-wider">
+                        <span>Execute</span>
+                        <span class="material-icons text-sm ml-1">chevron_right</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 9 -->
+            <div id="post-9" class="post-card border border-gray-800 bg-gray-900/30 flex flex-col h-full group relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div class="p-6 flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-4xl font-bold text-gray-800 group-hover:text-gray-700 transition-colors select-none">09</span>
+                        <span class="text-xs text-accent border border-accent/30 px-2 py-1 rounded bg-accent/5">THEORY</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-200 mb-2 group-hover:text-accent transition-colors">Foundation of Chance</h3>
+                    <p class="text-xs text-gray-500 mb-4 font-mono">November 15, 2025</p>
+                    <p class="text-sm text-gray-400 mb-6 flex-grow">The Foundation of Chance: Interpretations, Axioms, and Measure Theory.</p>
+                    <a href="homework/homework9/homework9.html" class="inline-flex items-center text-sm font-bold text-accent hover:text-white transition-colors mt-auto uppercase tracking-wider">
+                        <span>Execute</span>
+                        <span class="material-icons text-sm ml-1">chevron_right</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 10 -->
+            <div id="post-10" class="post-card border border-gray-800 bg-gray-900/30 flex flex-col h-full group relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div class="p-6 flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-4xl font-bold text-gray-800 group-hover:text-gray-700 transition-colors select-none">10</span>
+                        <span class="text-xs text-accent border border-accent/30 px-2 py-1 rounded bg-accent/5">LAW</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-200 mb-2 group-hover:text-accent transition-colors">Law of Small Numbers</h3>
+                    <p class="text-xs text-gray-500 mb-4 font-mono">November 15, 2025</p>
+                    <p class="text-sm text-gray-400 mb-6 flex-grow">Simulating the Poisson Process (The "Law of Small Numbers").</p>
+                    <a href="homework/homework10/homework10.html" class="inline-flex items-center text-sm font-bold text-accent hover:text-white transition-colors mt-auto uppercase tracking-wider">
+                        <span>Execute</span>
+                        <span class="material-icons text-sm ml-1">chevron_right</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 11 -->
+            <div id="post-11" class="post-card border border-gray-800 bg-gray-900/30 flex flex-col h-full group relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div class="p-6 flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-4xl font-bold text-gray-800 group-hover:text-gray-700 transition-colors select-none">11</span>
+                        <span class="text-xs text-accent border border-accent/30 px-2 py-1 rounded bg-accent/5">MOTION</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-200 mb-2 group-hover:text-accent transition-colors">Brownian Motion</h3>
+                    <p class="text-xs text-gray-500 mb-4 font-mono">November 29, 2025</p>
+                    <p class="text-sm text-gray-400 mb-6 flex-grow">From Steps to Curves: Simulating Brownian Motion.</p>
+                    <a href="homework/homework11/homework11.html" class="inline-flex items-center text-sm font-bold text-accent hover:text-white transition-colors mt-auto uppercase tracking-wider">
+                        <span>Execute</span>
+                        <span class="material-icons text-sm ml-1">chevron_right</span>
+                    </a>
+                </div>
+            </div>
+
         </div>
-             <div id="post-1" class="post-card border-x border-b border-gray-200/20">
-            <div class="post-header p-4 sm:p-6 cursor-pointer flex justify-between items-center border-t-4 border-accent">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-bold"><span class="text-accent mr-2">#4</span>HOMEWORK</h2>
-                <span class="material-icons expand-icon text-3xl transition-transform duration-300">add</span>
-            </div>
-            <div class="post-content px-4 sm:px-6 pb-6">
-                 <div class="prose prose-invert max-w-none text-gray-300">
-                      <p class="text-sm text-gray-400">October 22, 2025</p>
-                      <p> Demonstrating the Law of Large Numbers</p>
-                      <a href="homework/homework4/homework4.html" class="mt-4 inline-flex items-center text-accent">
-  Read More >>
-</a>
-                 </div>
-            </div>
-        </div>  
-         <div id="post-1" class="post-card border-x border-b border-gray-200/20">
-            <div class="post-header p-4 sm:p-6 cursor-pointer flex justify-between items-center border-t-4 border-accent">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-bold"><span class="text-accent mr-2">#5</span>HOMEWORK</h2>
-                <span class="material-icons expand-icon text-3xl transition-transform duration-300">add</span>
-            </div>
-            <div class="post-content px-4 sm:px-6 pb-6">
-                 <div class="prose prose-invert max-w-none text-gray-300">
-                      <p class="text-sm text-gray-400">October 31, 2025</p>
-                      <p> Understanding Averages: Which "Measure of Location" is Best?</p>
-                      <a href="homework/homework5/homework5.html" class="mt-4 inline-flex items-center text-accent">
-  Read More >>
-</a>
-                 </div>
-            </div>
-        </div>  
-         <div id="post-1" class="post-card border-x border-b border-gray-200/20">
-            <div class="post-header p-4 sm:p-6 cursor-pointer flex justify-between items-center border-t-4 border-accent">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-bold"><span class="text-accent mr-2">#6</span>HOMEWORK</h2>
-                <span class="material-icons expand-icon text-3xl transition-transform duration-300">add</span>
-            </div>
-            <div class="post-content px-4 sm:px-6 pb-6">
-                 <div class="prose prose-invert max-w-none text-gray-300">
-                      <p class="text-sm text-gray-400">November 01, 2025</p>
-                      <p> Online Algorithms: Recurrence Formulas for Mean and Variance</p>
-                      <a href="homework/homework6/homework6.html" class="mt-4 inline-flex items-center text-accent">
-  Read More >>
-</a>
-                 </div>
-            </div>
-        </div>  
 
-        <div id="post-1" class="post-card border-x border-b border-gray-200/20">
-            <div class="post-header p-4 sm:p-6 cursor-pointer flex justify-between items-center border-t-4 border-accent">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-bold"><span class="text-accent mr-2">#4</span>HOMEWORK</h2>
-                <span class="material-icons expand-icon text-3xl transition-transform duration-300">add</span>
-            </div>
-            <div class="post-content px-4 sm:px-6 pb-6">
-                 <div class="prose prose-invert max-w-none text-gray-300">
-                      <p class="text-sm text-gray-400">October 22, 2025</p>
-                      <p> Demonstrating the Law of Large Numbers</p>
-                      <a href="homework/homework4/homework4.html" class="mt-4 inline-flex items-center text-accent">
-  Read More >>
-</a>
-                 </div>
-            </div>
-        </div>  
-         <div id="post-1" class="post-card border-x border-b border-gray-200/20">
-            <div class="post-header p-4 sm:p-6 cursor-pointer flex justify-between items-center border-t-4 border-accent">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-bold"><span class="text-accent mr-2">#5</span>HOMEWORK</h2>
-                <span class="material-icons expand-icon text-3xl transition-transform duration-300">add</span>
-            </div>
-            <div class="post-content px-4 sm:px-6 pb-6">
-                 <div class="prose prose-invert max-w-none text-gray-300">
-                      <p class="text-sm text-gray-400">October 31, 2025</p>
-                      <p> Understanding Averages: Which "Measure of Location" is Best?</p>
-                      <a href="homework/homework5/homework5.html" class="mt-4 inline-flex items-center text-accent">
-  Read More >>
-</a>
-                 </div>
-            </div>
-        </div>  
-
-        <div id="post-1" class="post-card border-x border-b border-gray-200/20">
-            <div class="post-header p-4 sm:p-6 cursor-pointer flex justify-between items-center border-t-4 border-accent">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-bold"><span class="text-accent mr-2">#7</span>HOMEWORK</h2>
-                <span class="material-icons expand-icon text-3xl transition-transform duration-300">add</span>
-            </div>
-            <div class="post-content px-4 sm:px-6 pb-6">
-                 <div class="prose prose-invert max-w-none text-gray-300">
-                      <p class="text-sm text-gray-400">November 10, 2025</p>
-                      <p>  Security Simulation, Random Walks, and Binomial Convergence</p>
-                      <a href="homework/homework7/homework7.html" class="mt-4 inline-flex items-center text-accent">
-  Read More >>
-</a>
-                 </div>
-            </div>
-        </div>  
-         <div id="post-1" class="post-card border-x border-b border-gray-200/20">
-            <div class="post-header p-4 sm:p-6 cursor-pointer flex justify-between items-center border-t-4 border-accent">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-bold"><span class="text-accent mr-2">#8</span>HOMEWORK</h2>
-                <span class="material-icons expand-icon text-3xl transition-transform duration-300">add</span>
-            </div>
-            <div class="post-content px-4 sm:px-6 pb-6">
-                 <div class="prose prose-invert max-w-none text-gray-300">
-                      <p class="text-sm text-gray-400">November 10, 2025</p>
-                      <p> The Thread of Recurrence: Connecting Statistics, Combinatorics, and Sequences</p>
-                      <a href="homework/homework8/homework8.html" class="mt-4 inline-flex items-center text-accent">
-  Read More >>
-</a>
-                 </div>
-            </div>
-        </div>  
-
-
-         <div id="post-1" class="post-card border-x border-b border-gray-200/20">
-            <div class="post-header p-4 sm:p-6 cursor-pointer flex justify-between items-center border-t-4 border-accent">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-bold"><span class="text-accent mr-2">#9</span>HOMEWORK</h2>
-                <span class="material-icons expand-icon text-3xl transition-transform duration-300">add</span>
-            </div>
-            <div class="post-content px-4 sm:px-6 pb-6">
-                 <div class="prose prose-invert max-w-none text-gray-300">
-                      <p class="text-sm text-gray-400">November 10, 2025</p>
-                      <p>  The Foundation of Chance: Interpretations, Axioms, and Measure Theory</p>
-                      <a href="homework/homework9/homework9.html" class="mt-4 inline-flex items-center text-accent">
-  Read More >>
-</a>
-                 </div>
-            </div>
-        </div>  
-
-
-         <div id="post-1" class="post-card border-x border-b border-gray-200/20">
-            <div class="post-header p-4 sm:p-6 cursor-pointer flex justify-between items-center border-t-4 border-accent">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-bold"><span class="text-accent mr-2">#10</span>HOMEWORK</h2>
-                <span class="material-icons expand-icon text-3xl transition-transform duration-300">add</span>
-            </div>
-            <div class="post-content px-4 sm:px-6 pb-6">
-                 <div class="prose prose-invert max-w-none text-gray-300">
-                      <p class="text-sm text-gray-400">November 10, 2025</p>
-                      <p> Simulating the Poisson Process (The "Law of Small Numbers")</p>
-                      <a href="homework/homework10/homework10.html" class="mt-4 inline-flex items-center text-accent">
-  Read More >>
-</a>
-                 </div>
-            </div>
-        </div>  
-
-        
-        
+        <footer class="w-full text-sm mt-16 text-center text-gray-500 border-t border-gray-800 pt-8">
+            <p class="font-bold tracking-wider mb-2">STATISTICS_LOG_END</p>
+            <p>&copy; 2025 Enrico Garrapa - Matricola: 2222774</p>
+        </footer>
     </div>
-
-    <footer class="max-w-3xl mx-auto w-full text-sm mt-16 text-center text-gray-500 px-4">
-        <p>&copy; 2025 Statistics Blog. All rights reserved.</p>
-        <p class="mt-2">Creato da Enrico Garrapa - Matricola: 2222774</p>
-    </footer>
 </div>
 
 <script>
@@ -372,7 +387,6 @@
             // Point of entry
             init() {
                 this.generateIndex();
-                this.initPostCards();
                 this.initTypewriter();
             },
 
@@ -384,43 +398,18 @@
 
                 postsIndex.innerHTML = ''; // Clear existing items
 
-                posts.forEach(post => {
+                posts.forEach((post, index) => {
                     const postId = post.id;
-                    const postTitleElement = post.querySelector('h2');
+                    const postTitleElement = post.querySelector('h3');
                     if (!postId || !postTitleElement) return;
 
-                    // Extract and shorten the title for the index
+                    // Extract title
                     const titleText = postTitleElement.textContent.trim();
-                    const titleWords = titleText.split(' ');
-                    const shortTitle = titleWords.slice(0, 4).join(' ') + (titleWords.length > 4 ? '...' : '');
+                    const shortTitle = titleText.length > 20 ? titleText.substring(0, 18) + ".." : titleText;
 
                     const listItem = document.createElement('li');
-                    listItem.innerHTML = `<a href="#${postId}" class="hover:text-accent transition-colors duration-300">${shortTitle}</a>`;
+                    listItem.innerHTML = `<a href="#${postId}" class="hover:text-accent transition-colors duration-300">[${(index + 1).toString().padStart(2, '0')}] ${shortTitle}</a>`;
                     postsIndex.appendChild(listItem);
-                });
-            },
-
-            // Handles the expand/collapse functionality for each post
-            initPostCards() {
-                const cards = document.querySelectorAll('.post-card');
-                cards.forEach(card => {
-                    const header = card.querySelector('.post-header');
-                    const content = card.querySelector('.post-content');
-                    const icon = header.querySelector('.expand-icon');
-
-                    header.addEventListener('click', () => {
-                        const isExpanded = card.classList.toggle('expanded');
-                        
-                        if (isExpanded) {
-                            content.style.maxHeight = content.scrollHeight + "px";
-                            icon.textContent = 'remove';
-                            icon.style.transform = 'rotate(180deg)';
-                        } else {
-                            content.style.maxHeight = '0px';
-                            icon.textContent = 'add';
-                            icon.style.transform = 'rotate(0deg)';
-                        }
-                    });
                 });
             },
 
@@ -429,13 +418,16 @@
                 const titleEl = document.getElementById('hero-title');
                 if (!titleEl) return;
                 
+                // Ensure we insert before the cursor
                 const cursorEl = titleEl.querySelector('.blinking-cursor');
                 const textToType = "STATISTICS";
                 let i = 0;
 
                 function typeWriter() {
                     if (i < textToType.length) {
-                        cursorEl.insertAdjacentText('beforebegin', textToType.charAt(i));
+                        const span = document.createElement('span');
+                        span.textContent = textToType.charAt(i);
+                        titleEl.insertBefore(span, cursorEl);
                         i++;
                         setTimeout(typeWriter, 150); // Typing speed
                     }
@@ -450,4 +442,3 @@
 
 </body>
 </html>
-
